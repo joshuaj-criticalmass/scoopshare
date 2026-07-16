@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-nunito: "Nunito", sans-serif;
+    --font-pacifico: "Pacifico", cursive;
+  }
+
+  body {
+    @apply bg-amber-50 text-gray-800;
+    font-family: var(--font-nunito);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  * {
+    touch-action: manipulation;
+  }
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
