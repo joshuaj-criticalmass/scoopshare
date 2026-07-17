@@ -27,6 +27,7 @@ export type Player = {
 export type SwapProposal = {
   id: string;
   fromPlayerId: string;
+  fromPlayerName: string;
   toPlayerId: string;
   offeredFlavor: FlavorId;
   requestedFlavor: FlavorId;

@@ -257,3 +257,151 @@ export async function resetGame(): Promise<void> {
 export function checkWin(scoops: [FlavorId, FlavorId, FlavorId]): boolean {
   return scoops[0] === scoops[1] && scoops[1] === scoops[2];
 }
+
+// ---------------------------------------------------------------------------
+// Propose a swap
+// ---------------------------------------------------------------------------
+
+export type ProposeResult =
+  | { ok: true; proposalId: string }
+  | { ok: false; code: "locked"; lockedUntil: number }
+  | { ok: false; code: "no_offer_scoop" | "game_not_active" | "not_found" | "same_player" }
+  | { ok: false; code: "no_match"; lockedUntil: number };
+
+export async function proposeSwap(
+  fromPlayerId: string,
+  toPlayerId: string,
+  offeredFlavor: FlavorId,
+  requestedFlavor: FlavorId
+): Promise<ProposeResult> {
+  if (fromPlayerId === toPlayerId) return { ok: false, code: "same_player" };
+
+  const [gameState, fromPlayer, toPlayer] = await Promise.all([
+    getGameState(),
+    getPlayer(fromPlayerId),
+    getPlayer(toPlayerId),
+  ]);
+
+  if (gameState.status !== "active") return { ok: false, code: "game_not_active" };
+  if (!fromPlayer || !toPlayer) return { ok: false, code: "not_found" };
+
+  // Rule 1 — proposer locked?
+  if (fromPlayer.lockedUntil !== null && Date.now() < fromPlayer.lockedUntil) {
+    return { ok: false, code: "locked", lockedUntil: fromPlayer.lockedUntil };
+  }
+
+  // Rule 2 — proposer holds offeredFlavor?
+  if (!fromPlayer.scoops.includes(offeredFlavor)) {
+    return { ok: false, code: "no_offer_scoop" };
+  }
+
+  // Rule 3 — target holds requestedFlavor? (no-match → lock proposer)
+  if (!toPlayer.scoops.includes(requestedFlavor)) {
+    const lockedUntil = Date.now() + 5000;
+    await setPlayer({ ...fromPlayer, lockedUntil });
+    return { ok: false, code: "no_match", lockedUntil };
+  }
+
+  const proposal: SwapProposal = {
+    id: crypto.randomUUID(),
+    fromPlayerId,
+    fromPlayerName: fromPlayer.name,
+    toPlayerId,
+    offeredFlavor,
+    requestedFlavor,
+    status: "pending",
+    createdAt: Date.now(),
+  };
+
+  await Promise.all([
+    setProposal(proposal),
+    addProposalForPlayer(toPlayerId, proposal.id),
+  ]);
+
+  return { ok: true, proposalId: proposal.id };
+}
+
+// ---------------------------------------------------------------------------
+// Respond to an incoming proposal (accept or decline)
+// ---------------------------------------------------------------------------
+
+export type RespondResult =
+  | { ok: true; accepted: true; newScoops: [FlavorId, FlavorId, FlavorId]; hasWon: boolean }
+  | { ok: true; accepted: false }
+  | { ok: false; code: "not_found" | "expired" | "wrong_player" | "stale" };
+
+export async function respondToProposal(
+  proposalId: string,
+  accept: boolean,
+  respondingPlayerId: string
+): Promise<RespondResult> {
+  const proposal = await getProposal(proposalId);
+
+  if (!proposal) return { ok: false, code: "not_found" };
+  if (proposal.status !== "pending") return { ok: false, code: "expired" };
+  if (proposal.toPlayerId !== respondingPlayerId) return { ok: false, code: "wrong_player" };
+
+  if (!accept) {
+    const proposer = await getPlayer(proposal.fromPlayerId);
+    await Promise.all([
+      setProposal({ ...proposal, status: "declined" }),
+      removeProposalForPlayer(respondingPlayerId, proposalId),
+      ...(proposer ? [setPlayer({ ...proposer, lockedUntil: Date.now() + 5000 })] : []),
+    ]);
+    return { ok: true, accepted: false };
+  }
+
+  // Accept — re-validate both players still hold the required scoops
+  const [fromPlayer, toPlayer] = await Promise.all([
+    getPlayer(proposal.fromPlayerId),
+    getPlayer(proposal.toPlayerId),
+  ]);
+
+  if (!fromPlayer || !toPlayer) {
+    await Promise.all([
+      setProposal({ ...proposal, status: "expired" }),
+      removeProposalForPlayer(respondingPlayerId, proposalId),
+    ]);
+    return { ok: false, code: "stale" };
+  }
+
+  if (
+    !fromPlayer.scoops.includes(proposal.offeredFlavor) ||
+    !toPlayer.scoops.includes(proposal.requestedFlavor)
+  ) {
+    await Promise.all([
+      setProposal({ ...proposal, status: "expired" }),
+      removeProposalForPlayer(respondingPlayerId, proposalId),
+    ]);
+    return { ok: false, code: "stale" };
+  }
+
+  // Swap one occurrence of each flavor
+  const newFromScoops = [...fromPlayer.scoops] as [FlavorId, FlavorId, FlavorId];
+  const newToScoops = [...toPlayer.scoops] as [FlavorId, FlavorId, FlavorId];
+  newFromScoops[newFromScoops.indexOf(proposal.offeredFlavor)] = proposal.requestedFlavor;
+  newToScoops[newToScoops.indexOf(proposal.requestedFlavor)] = proposal.offeredFlavor;
+
+  const fromWins = checkWin(newFromScoops);
+  const toWins = checkWin(newToScoops);
+  const now = Date.now();
+
+  await Promise.all([
+    setPlayer({
+      ...fromPlayer,
+      scoops: newFromScoops,
+      hasWon: fromPlayer.hasWon || fromWins,
+      wonAt: fromWins && !fromPlayer.hasWon ? now : fromPlayer.wonAt,
+    }),
+    setPlayer({
+      ...toPlayer,
+      scoops: newToScoops,
+      hasWon: toPlayer.hasWon || toWins,
+      wonAt: toWins && !toPlayer.hasWon ? now : toPlayer.wonAt,
+    }),
+    setProposal({ ...proposal, status: "accepted" }),
+    removeProposalForPlayer(respondingPlayerId, proposalId),
+  ]);
+
+  return { ok: true, accepted: true, newScoops: newToScoops, hasWon: toPlayer.hasWon || toWins };
+}
