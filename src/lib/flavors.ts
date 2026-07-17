@@ -16,5 +16,14 @@ export function randomFlavor(): FlavorId {
 }
 
 export function randomScoops(): [FlavorId, FlavorId, FlavorId] {
-  return [randomFlavor(), randomFlavor(), randomFlavor()];
+  const pool = [...FLAVOR_IDS];
+  const scoops: FlavorId[] = [];
+
+  for (let i = 0; i < 3; i++) {
+    const index = Math.floor(Math.random() * pool.length);
+    const [picked] = pool.splice(index, 1);
+    scoops.push(picked);
+  }
+
+  return scoops as [FlavorId, FlavorId, FlavorId];
 }
