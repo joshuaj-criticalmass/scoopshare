@@ -5,8 +5,8 @@ import { FLAVORS } from "@/lib/flavors";
 interface IceCreamConeProps {
   /** [top, middle, bottom] */
   scoops: [FlavorId, FlavorId, FlavorId];
-  /** Width in px — height scales proportionally (~2.79×) */
-  size?: number;
+  /** Width value — number = px, string = any valid CSS width */
+  size?: number | string;
   className?: string;
 }
 
@@ -95,9 +95,8 @@ export function IceCreamCone({ scoops, size = 160, className = "" }: IceCreamCon
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 363.29 1014.28"
-      width={size}
-      height={Math.round(size * (1014.28 / 363.29))}
       className={className}
+      style={{ width: size, height: "auto" }}
       aria-hidden="true"
     >
       <defs>

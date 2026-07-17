@@ -86,23 +86,23 @@ export function ProposeModal({ playerId, playerScoops, onClose, onNoMatch }: Pro
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-4"
+      className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-[4vw]"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-white rounded-3xl w-full max-w-sm max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
+      <div className="bg-white rounded-[min(1.5rem,4vw)] w-[92vw] max-w-[26rem] max-h-[88dvh] flex flex-col overflow-hidden shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-gray-100">
+        <div className="flex items-center justify-between px-[4vw] pt-[2vh] pb-[1.2vh] border-b border-gray-100">
           <div className="flex items-center gap-3">
             {step > 1 && (
               <button
                 onClick={() => setStep((s) => (s - 1) as 1 | 2 | 3)}
-                className="text-gray-400 hover:text-gray-600 text-xl leading-none"
+                className="text-gray-400 hover:text-gray-600 text-[clamp(1.1rem,4vw,1.3rem)] leading-none"
                 aria-label="Back"
               >
                 ←
               </button>
             )}
-            <h2 className="font-pacifico text-lg text-amber-600">
+            <h2 className="font-pacifico text-[clamp(1rem,4vw,1.25rem)] text-amber-600">
               {step === 1 && "Trade with…"}
               {step === 2 && "You're offering…"}
               {step === 3 && "You want back…"}
@@ -110,7 +110,7 @@ export function ProposeModal({ playerId, playerScoops, onClose, onNoMatch }: Pro
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+            className="text-gray-400 hover:text-gray-600 text-[clamp(1.3rem,5vw,1.6rem)] leading-none"
             aria-label="Close"
           >
             ×
@@ -118,7 +118,7 @@ export function ProposeModal({ playerId, playerScoops, onClose, onNoMatch }: Pro
         </div>
 
         {/* Step indicators */}
-        <div className="flex gap-1.5 px-5 py-2">
+        <div className="flex gap-1.5 px-[4vw] py-[1vh]">
           {[1, 2, 3].map((s) => (
             <div
               key={s}
@@ -130,7 +130,7 @@ export function ProposeModal({ playerId, playerScoops, onClose, onNoMatch }: Pro
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto px-5 pb-5">
+        <div className="flex-1 overflow-y-auto px-[4vw] pb-[2vh]">
 
           {/* ── Step 1: Pick a player ── */}
           {step === 1 && (
@@ -141,12 +141,12 @@ export function ProposeModal({ playerId, playerScoops, onClose, onNoMatch }: Pro
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search by name…"
-                className="w-full px-4 py-3 rounded-2xl border-2 border-amber-200 focus:border-amber-400 focus:outline-none text-gray-700 placeholder:text-gray-300"
+                className="w-full px-[4vw] py-[1.6vh] rounded-[min(1rem,4vw)] border-2 border-amber-200 focus:border-amber-400 focus:outline-none text-[clamp(0.95rem,3.8vw,1rem)] text-gray-700 placeholder:text-gray-300"
               />
               {loadingPlayers ? (
-                <p className="text-center text-gray-400 py-6">Loading players…</p>
+                <p className="text-center text-gray-400 py-[3vh] text-[clamp(0.85rem,3.4vw,0.95rem)]">Loading players…</p>
               ) : filteredPlayers.length === 0 ? (
-                <p className="text-center text-gray-400 py-6">No players found</p>
+                <p className="text-center text-gray-400 py-[3vh] text-[clamp(0.85rem,3.4vw,0.95rem)]">No players found</p>
               ) : (
                 <ul className="flex flex-col gap-2">
                   {filteredPlayers.map((p) => (
@@ -156,10 +156,10 @@ export function ProposeModal({ playerId, playerScoops, onClose, onNoMatch }: Pro
                           setSelectedPlayer(p);
                           setStep(2);
                         }}
-                        className="w-full text-left px-4 py-3.5 rounded-2xl border-2 border-gray-100 hover:border-amber-300 hover:bg-amber-50 transition-colors flex items-center justify-between"
+                        className="w-full text-left px-[4vw] py-[1.6vh] rounded-[min(1rem,4vw)] border-2 border-gray-100 hover:border-amber-300 hover:bg-amber-50 transition-colors flex items-center justify-between gap-3"
                       >
-                        <span className="font-semibold text-gray-700">{p.name}</span>
-                        {p.hasWon && <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Winner 🏆</span>}
+                        <span className="font-semibold text-[clamp(0.9rem,3.7vw,1rem)] text-gray-700">{p.name}</span>
+                        {p.hasWon && <span className="text-[clamp(0.68rem,2.8vw,0.75rem)] bg-amber-100 text-amber-700 px-[2vw] py-[0.3vh] rounded-full">Winner 🏆</span>}
                       </button>
                     </li>
                   ))}
@@ -171,7 +171,7 @@ export function ProposeModal({ playerId, playerScoops, onClose, onNoMatch }: Pro
           {/* ── Step 2: Pick scoop to offer ── */}
           {step === 2 && (
             <div className="flex flex-col gap-3 pt-2">
-              <p className="text-sm text-gray-500 text-center">
+              <p className="text-[clamp(0.82rem,3.2vw,0.92rem)] text-gray-500 text-center">
                 Trading with <strong>{selectedPlayer?.name}</strong>
               </p>
               {playerScoops.map((flavor, i) => {
@@ -183,15 +183,15 @@ export function ProposeModal({ playerId, playerScoops, onClose, onNoMatch }: Pro
                       setOfferedFlavor(flavor);
                       setStep(3);
                     }}
-                    className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl border-2 border-gray-100 hover:border-amber-300 hover:bg-amber-50 transition-colors"
+                    className="w-full flex items-center gap-4 px-[4vw] py-[1.7vh] rounded-[min(1rem,4vw)] border-2 border-gray-100 hover:border-amber-300 hover:bg-amber-50 transition-colors"
                   >
                     <span
-                      className="w-10 h-10 rounded-full border-2 border-white shadow flex-shrink-0"
+                      className="w-[9vw] h-[9vw] max-w-[2.5rem] max-h-[2.5rem] rounded-full border-2 border-white shadow flex-shrink-0"
                       style={{ background: color }}
                     />
                     <div className="text-left">
-                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{SCOOP_LABELS[i]}</p>
-                      <p className="font-semibold text-gray-700">{label}</p>
+                      <p className="text-[clamp(0.68rem,2.7vw,0.75rem)] font-bold text-gray-400 uppercase tracking-wider">{SCOOP_LABELS[i]}</p>
+                      <p className="font-semibold text-[clamp(0.92rem,3.7vw,1rem)] text-gray-700">{label}</p>
                     </div>
                   </button>
                 );
@@ -202,7 +202,7 @@ export function ProposeModal({ playerId, playerScoops, onClose, onNoMatch }: Pro
           {/* ── Step 3: Pick flavor to request ── */}
           {step === 3 && (
             <div className="flex flex-col gap-3 pt-2">
-              <p className="text-sm text-gray-500 text-center">
+              <p className="text-[clamp(0.82rem,3.2vw,0.92rem)] text-gray-500 text-center leading-snug">
                 Giving up <strong>{offeredFlavor ? FLAVORS[offeredFlavor].label : ""}</strong> — what do you want?
               </p>
               <div className="grid grid-cols-2 gap-3">
@@ -213,28 +213,28 @@ export function ProposeModal({ playerId, playerScoops, onClose, onNoMatch }: Pro
                     <button
                       key={fid}
                       onClick={() => setRequestedFlavor(fid)}
-                      className={`flex items-center gap-3 px-3 py-3 rounded-2xl border-2 transition-colors ${
+                      className={`flex items-center gap-3 px-[3vw] py-[1.4vh] rounded-[min(1rem,4vw)] border-2 transition-colors ${
                         selected
                           ? "border-amber-400 bg-amber-50"
                           : "border-gray-100 hover:border-amber-200 hover:bg-amber-50"
                       }`}
                     >
                       <span
-                        className="w-8 h-8 rounded-full border-2 border-white shadow flex-shrink-0"
+                        className="w-[7vw] h-[7vw] max-w-[2rem] max-h-[2rem] rounded-full border-2 border-white shadow flex-shrink-0"
                         style={{ background: color }}
                       />
-                      <span className="text-sm font-semibold text-gray-700 text-left leading-tight">{label}</span>
+                      <span className="text-[clamp(0.8rem,3.2vw,0.92rem)] font-semibold text-gray-700 text-left leading-tight">{label}</span>
                     </button>
                   );
                 })}
               </div>
 
-              {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+              {error && <p className="text-red-500 text-[clamp(0.8rem,3.2vw,0.9rem)] text-center">{error}</p>}
 
               <button
                 onClick={handleSubmit}
                 disabled={!requestedFlavor || submitting}
-                className="w-full py-4 rounded-2xl bg-amber-500 hover:bg-amber-600 active:bg-amber-700 disabled:bg-amber-200 disabled:cursor-not-allowed text-white font-bold text-lg transition-colors mt-2"
+                className="w-full min-h-[3.25rem] py-[1.7vh] rounded-[min(1rem,4vw)] bg-amber-500 hover:bg-amber-600 active:bg-amber-700 disabled:bg-amber-200 disabled:cursor-not-allowed text-white font-bold text-[clamp(0.98rem,4vw,1.1rem)] transition-colors mt-[1vh]"
               >
                 {submitting ? "Sending…" : "Send Proposal"}
               </button>

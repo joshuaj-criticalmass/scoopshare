@@ -52,15 +52,18 @@ export default function JoinPage() {
   if (checking) return null;
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-6 py-10 gap-8">
-      <IceCreamCone scoops={["bubblegum", "mint-choc-chip", "strawberry"]} size={100} />
+    <main className="min-h-[100dvh] flex flex-col items-center justify-center px-[6vw] py-[4vh] gap-[3vh] overflow-x-hidden">
+      <IceCreamCone
+        scoops={["bubblegum", "mint-choc-chip", "strawberry"]}
+        size="clamp(5.5rem, 24vw, 7.5rem)"
+      />
 
-      <div className="text-center">
-        <h1 className="font-pacifico text-4xl text-amber-600 mb-2">ScoopShare</h1>
-        <p className="text-gray-500 text-base">Trade scoops. Make friends. Win ice cream.</p>
+      <div className="text-center max-w-[88vw]">
+        <h1 className="font-pacifico text-[clamp(2.1rem,8.6vw,3.2rem)] leading-[0.95] text-amber-600 mb-[1vh]">ScoopShare</h1>
+        <p className="text-gray-500 text-[clamp(0.95rem,3.8vw,1.125rem)] leading-snug">Trade scoops. Make friends. Win ice cream.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="w-full max-w-xs flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="w-[88vw] max-w-[24rem] flex flex-col gap-[1.8vh]">
         <div>
           <input
             type="text"
@@ -71,17 +74,17 @@ export default function JoinPage() {
             autoFocus
             autoComplete="off"
             autoCapitalize="words"
-            className="w-full text-lg px-4 py-3.5 rounded-2xl border-2 border-amber-200 focus:border-amber-400 focus:outline-none bg-white placeholder:text-gray-300 text-gray-700"
+            className="w-full text-[clamp(1rem,4.2vw,1.125rem)] px-[4vw] py-[1.8vh] rounded-[min(1.25rem,4vw)] border-2 border-amber-200 focus:border-amber-400 focus:outline-none bg-white placeholder:text-gray-300 text-gray-700"
           />
           {error && (
-            <p className="text-red-500 text-sm mt-2 text-center">{error}</p>
+            <p className="text-red-500 text-[clamp(0.85rem,3.4vw,0.95rem)] mt-[1vh] text-center">{error}</p>
           )}
         </div>
 
         <button
           type="submit"
           disabled={isLoading || !name.trim()}
-          className="w-full py-4 rounded-2xl bg-amber-500 hover:bg-amber-600 active:bg-amber-700 disabled:bg-amber-200 disabled:cursor-not-allowed text-white font-bold text-xl transition-colors"
+          className="w-full py-[2vh] min-h-[3.5rem] rounded-[min(1.25rem,4vw)] bg-amber-500 hover:bg-amber-600 active:bg-amber-700 disabled:bg-amber-200 disabled:cursor-not-allowed text-white font-bold text-[clamp(1.05rem,4.6vw,1.35rem)] transition-colors"
         >
           {isLoading ? "Joining..." : "Join the Fun!"}
         </button>

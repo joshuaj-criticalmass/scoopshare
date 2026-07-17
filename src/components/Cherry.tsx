@@ -1,5 +1,5 @@
 interface CherryProps {
-  size?: number;
+  size?: number | string;
   className?: string;
   animateDrop?: boolean;
 }
@@ -9,14 +9,16 @@ export function Cherry({ size = 54, className = "", animateDrop = false }: Cherr
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 112.64 203.67"
-      width={size}
-      height={Math.round(size * (203.67 / 112.64))}
       aria-hidden="true"
       className={className}
       style={
         animateDrop
-          ? { animation: "cherry-drop 1200ms cubic-bezier(0.2, 0.9, 0.18, 1) both" }
-          : undefined
+          ? {
+              width: size,
+              height: "auto",
+              animation: "cherry-drop 1200ms cubic-bezier(0.2, 0.9, 0.18, 1) both",
+            }
+          : { width: size, height: "auto" }
       }
     >
       <path d="M111.74 140.6c-2.43-12.95-14.36-31.8-26.99-34.26-9.36-1.82-18.43-1.27-27.68-.7l1.79 5.01 1.33 2.22c4.15-1.73 7.5-3.46 12.17-3.56-2.99 9.05-22.67 9.84-33.04 7.43-1.69-.39-3.44-.91-3.08-3.31l12.47 1.53c.96-1.95 1.13-3.84 1.51-5.6-.31-1-.34-2.54-.45-3.6-20.36-2.63-38.29 2.05-46.26 22.1-10.13 25.5 2.32 59.86 28.12 70.94 13.67 5.87 29.15 6.37 43.16 1.96 25.86-8.13 41.92-33.55 36.93-60.14Zm-68.01-16.47c5.76-4.22 16.93-1.9 25.53-6.85 3.65-2.1 6.86-5.67 11.69-3.75-6.01 10.52-28.19 18.16-37.21 10.6Zm42.63 11.08c-8.8 5.65-25.56 7.24-32.04-.74l14.94-3.1 9.7-4.77c2.05-1.01 4.63-2.48 7.21-.87 2.44 1.53 3.13 7.59.19 9.48" fill="#bc2327"/>
