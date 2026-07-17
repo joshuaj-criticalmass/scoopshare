@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { IceCreamCone } from "@/components/IceCreamCone";
 
 export default function JoinPage() {
   const router = useRouter();
@@ -52,15 +53,7 @@ export default function JoinPage() {
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-6 py-10 gap-8">
-      <svg width="80" height="112" viewBox="0 0 80 112" aria-hidden="true">
-        <circle cx="40" cy="20" r="19" fill="#F9B4E0" />
-        <circle cx="40" cy="42" r="19" fill="#A8D8C0" />
-        <circle cx="40" cy="62" r="19" fill="#F4A6B0" />
-        <polygon points="40,108 15,62 65,62" fill="#D4934A" />
-        <line x1="40" y1="62" x2="40" y2="108" stroke="#B87333" strokeWidth="1.2" />
-        <line x1="27" y1="62" x2="33" y2="108" stroke="#B87333" strokeWidth="0.8" />
-        <line x1="53" y1="62" x2="47" y2="108" stroke="#B87333" strokeWidth="0.8" />
-      </svg>
+      <IceCreamCone scoops={["bubblegum", "mint-choc-chip", "strawberry"]} size={100} />
 
       <div className="text-center">
         <h1 className="font-pacifico text-4xl text-amber-600 mb-2">ScoopShare</h1>

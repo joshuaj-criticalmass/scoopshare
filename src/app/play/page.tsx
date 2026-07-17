@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useGameState } from "@/hooks/useGameState";
 import { FLAVORS, FLAVOR_IDS } from "@/lib/flavors";
+import { IceCreamCone } from "@/components/IceCreamCone";
 
 export default function PlayPage() {
   const router = useRouter();
@@ -35,7 +36,7 @@ export default function PlayPage() {
   if (!playerId || gameState.status === "loading") {
     return (
       <main className="min-h-screen flex items-center justify-center">
-        <span className="text-5xl animate-bounce">🍦</span>
+        <IceCreamCone scoops={["vanilla", "vanilla", "vanilla"]} size={80} className="animate-bounce" />
       </main>
     );
   }
@@ -50,21 +51,7 @@ export default function PlayPage() {
   if (gameStatus === "lobby") {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center px-6 gap-8 text-center">
-        <svg
-          width="72"
-          height="104"
-          viewBox="0 0 80 112"
-          aria-hidden="true"
-          className="animate-bounce"
-        >
-          <circle cx="40" cy="20" r="19" fill="#F9B4E0" />
-          <circle cx="40" cy="42" r="19" fill="#A8D8C0" />
-          <circle cx="40" cy="62" r="19" fill="#F4A6B0" />
-          <polygon points="40,108 15,62 65,62" fill="#D4934A" />
-          <line x1="40" y1="62" x2="40" y2="108" stroke="#B87333" strokeWidth="1.2" />
-          <line x1="27" y1="62" x2="33" y2="108" stroke="#B87333" strokeWidth="0.8" />
-          <line x1="53" y1="62" x2="47" y2="108" stroke="#B87333" strokeWidth="0.8" />
-        </svg>
+        <IceCreamCone scoops={["strawberry", "cookies-and-cream", "bubblegum"]} size={90} className="animate-bounce" />
 
         <div>
           <h1 className="font-pacifico text-3xl text-amber-600 mb-2">
@@ -103,9 +90,9 @@ export default function PlayPage() {
   if (gameStatus === "active") {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center px-6 gap-6 text-center">
-        <span className="text-6xl">🍦</span>
+        <IceCreamCone scoops={player.scoops} size={160} />
         <h1 className="font-pacifico text-3xl text-amber-600">Game on!</h1>
-        <p className="text-gray-500">Your cone is being dealt…</p>
+        <p className="text-gray-500">Find someone to trade with!</p>
       </main>
     );
   }
