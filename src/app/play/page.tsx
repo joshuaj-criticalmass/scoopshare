@@ -6,6 +6,7 @@ import { FLAVORS, FLAVOR_IDS } from "@/lib/flavors";
 import { IceCreamCone } from "@/components/IceCreamCone";
 import { ProposeModal } from "@/components/ProposeModal";
 import { Confetti } from "@/components/Confetti";
+import { Cherry } from "@/components/Cherry";
 
 export default function PlayPage() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function PlayPage() {
   const [respondingTo, setRespondingTo] = useState<string | null>(null);
   const [countdownSec, setCountdownSec] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showCherryDrop, setShowCherryDrop] = useState(false);
   const hasWonRef = useRef(false);
 
   useEffect(() => {
@@ -52,6 +54,7 @@ export default function PlayPage() {
     if (currentHasWon && !hasWonRef.current) {
       hasWonRef.current = true;
       setShowConfetti(true);
+      setShowCherryDrop(true);
       const t = setTimeout(() => setShowConfetti(false), 4500);
       return () => clearTimeout(t);
     }
@@ -216,7 +219,16 @@ export default function PlayPage() {
           <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
             {playerName}&apos;s Cone
           </p>
-          <IceCreamCone scoops={player.scoops} size={160} />
+          <div className="relative flex items-start justify-center pt-8">
+            {player.hasWon && (
+              <Cherry
+                size={46}
+                animateDrop={showCherryDrop}
+                className="absolute left-1/2 top-0 z-10 -translate-x-1/2 drop-shadow-md"
+              />
+            )}
+            <IceCreamCone scoops={player.scoops} size={160} />
+          </div>
           <div className="flex flex-col gap-1.5 w-full max-w-[200px]">
             {player.scoops.map((flavor, i) => (
               <div key={i} className="flex items-center gap-2">
@@ -284,7 +296,15 @@ export default function PlayPage() {
   // ── Ended ──────────────────────────────────────────────────────────────────
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-6 gap-6 text-center">
-      <IceCreamCone scoops={player.scoops} size={140} />
+      <div className="relative flex items-start justify-center pt-8">
+        {player.hasWon && (
+          <Cherry
+            size={42}
+            className="absolute left-1/2 top-0 z-10 -translate-x-1/2 drop-shadow-md"
+          />
+        )}
+        <IceCreamCone scoops={player.scoops} size={140} />
+      </div>
       <h1 className="font-pacifico text-3xl text-amber-600">Game Over!</h1>
       {player.hasWon ? (
         <p className="text-gray-600">You won — great trading! 🏆</p>

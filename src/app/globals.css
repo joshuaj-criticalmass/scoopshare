@@ -8,6 +8,21 @@
   100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
 }
 
+@keyframes cherry-drop {
+  0% {
+    transform: translate(-50%, -100vh) rotate(-18deg) scale(0.92);
+  }
+  72% {
+    transform: translate(-50%, 14px) rotate(6deg) scale(1.02);
+  }
+  86% {
+    transform: translate(-50%, -6px) rotate(-4deg) scale(0.99);
+  }
+  100% {
+    transform: translate(-50%, 0) rotate(0deg) scale(1);
+  }
+}
+
 @layer base {
   :root {
     --font-nunito: "Nunito", sans-serif;
