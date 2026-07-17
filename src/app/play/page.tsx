@@ -1,10 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useGameState } from "@/hooks/useGameState";
 import { FLAVORS, FLAVOR_IDS } from "@/lib/flavors";
 import { IceCreamCone } from "@/components/IceCreamCone";
 import { ProposeModal } from "@/components/ProposeModal";
+import { Confetti } from "@/components/Confetti";
 
 export default function PlayPage() {
   const router = useRouter();
@@ -15,6 +16,8 @@ export default function PlayPage() {
   const [dismissedProposals, setDismissedProposals] = useState<Set<string>>(new Set());
   const [respondingTo, setRespondingTo] = useState<string | null>(null);
   const [countdownSec, setCountdownSec] = useState(0);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const hasWonRef = useRef(false);
 
   useEffect(() => {
     const pid = localStorage.getItem("ss_pid");
@@ -42,6 +45,17 @@ export default function PlayPage() {
   const serverLockedUntil =
     gameState.status === "ok" ? (gameState.player.lockedUntil ?? 0) : 0;
   const effectiveLockedUntil = Math.max(localLockedUntil ?? 0, serverLockedUntil);
+
+  // Fire confetti exactly once the moment hasWon flips to true
+  const currentHasWon = gameState.status === "ok" ? gameState.player.hasWon : false;
+  useEffect(() => {
+    if (currentHasWon && !hasWonRef.current) {
+      hasWonRef.current = true;
+      setShowConfetti(true);
+      const t = setTimeout(() => setShowConfetti(false), 4500);
+      return () => clearTimeout(t);
+    }
+  }, [currentHasWon]);
 
   useEffect(() => {
     if (effectiveLockedUntil <= Date.now()) {
@@ -260,6 +274,9 @@ export default function PlayPage() {
             onNoMatch={(lu) => setLocalLockedUntil(lu)}
           />
         )}
+
+        {/* ── Confetti burst on win ── */}
+        {showConfetti && <Confetti />}
       </main>
     );
   }

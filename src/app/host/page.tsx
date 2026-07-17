@@ -116,14 +116,28 @@ export default function HostPage() {
   }
 
   // ── In-game / ended ────────────────────────────────────────────────────────
+  const isEnded = status === "ended";
+
   return (
     <main className="min-h-screen flex flex-col px-8 py-10 bg-amber-50 gap-8">
+      {/* Header bar */}
       <div className="flex justify-between items-center">
-        <h1 className="font-pacifico text-4xl text-amber-600">ScoopShare</h1>
         <div className="flex items-center gap-5">
-          <span className="text-gray-600 font-semibold text-lg">
-            👥 {playerCount} {playerCount === 1 ? "player" : "players"}
-          </span>
+          <h1 className="font-pacifico text-4xl text-amber-600">ScoopShare</h1>
+          {isEnded && (
+            <span className="bg-amber-500 text-white font-bold px-4 py-1.5 rounded-full text-sm">
+              GAME OVER
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-5">
+          {/* Player count */}
+          <div className="bg-white rounded-2xl px-6 py-3 shadow-sm text-center">
+            <p className="text-4xl font-black text-amber-500 leading-none">{playerCount}</p>
+            <p className="text-gray-400 font-semibold text-sm mt-0.5">
+              {playerCount === 1 ? "player" : "players"}
+            </p>
+          </div>
           <button
             onClick={handleReset}
             disabled={resetting}
@@ -134,30 +148,44 @@ export default function HostPage() {
         </div>
       </div>
 
-      <div>
-        <h2 className="font-pacifico text-3xl text-amber-600 mb-6">
-          {winners.length === 0 ? "🍦 Game in progress…" : "🏆 Winners"}
-        </h2>
+      {/* Winners section */}
+      <div className="flex-1">
+        <div className="flex items-baseline gap-4 mb-6">
+          <h2 className="font-pacifico text-4xl text-amber-600">
+            {isEnded ? "🎉 Final Results" : winners.length === 0 ? "🍦 Game in progress…" : "🏆 Winners so far"}
+          </h2>
+          {winners.length > 0 && (
+            <span className="text-2xl font-bold text-gray-400">
+              {winners.length} / {playerCount}
+            </span>
+          )}
+        </div>
 
         {winners.length === 0 ? (
-          <p className="text-gray-400 text-xl">
-            First to collect 3 matching scoops wins…
+          <p className="text-gray-400 text-2xl">
+            First to collect 3 matching scoops wins!
           </p>
         ) : (
-          <div className="flex flex-col gap-3 max-w-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {winners.map((w, i) => (
               <div
                 key={`${w.name}-${w.wonAt}`}
-                className="flex items-center gap-4 bg-white rounded-2xl px-6 py-4 shadow-sm"
+                className={`flex items-center gap-5 bg-white rounded-3xl px-7 py-5 shadow-sm border-2 ${
+                  i === 0 ? "border-amber-400" : "border-transparent"
+                }`}
               >
-                <span className="text-3xl font-black text-amber-500 w-10">
+                <span
+                  className={`text-5xl font-black leading-none w-14 text-center ${
+                    i === 0 ? "text-amber-500" : i === 1 ? "text-gray-400" : "text-amber-300"
+                  }`}
+                >
                   #{i + 1}
                 </span>
                 <div>
-                  <p className="font-bold text-lg text-gray-800">{w.name}</p>
+                  <p className="font-black text-3xl text-gray-800 leading-tight">{w.name}</p>
                   {w.wonAt && (
-                    <p className="text-sm text-gray-400">
-                      {new Date(w.wonAt).toLocaleTimeString()}
+                    <p className="text-gray-400 font-semibold text-lg mt-0.5">
+                      {new Date(w.wonAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
                     </p>
                   )}
                 </div>
