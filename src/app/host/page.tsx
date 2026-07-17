@@ -20,7 +20,7 @@ export default function HostPage() {
   const [resetting, setResetting] = useState(false);
 
   useEffect(() => {
-    setJoinUrl(process.env.NEXT_PUBLIC_BASE_URL ?? window.location.origin);
+    setJoinUrl(window.location.origin);
   }, []);
 
   useEffect(() => {
