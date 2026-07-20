@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getGameState, getAllPlayers, startGame } from "@/lib/kv";
+import { MIN_PLAYERS_TO_START } from "@/lib/flavors";
 
 export async function POST() {
   try {
@@ -9,8 +10,11 @@ export async function POST() {
     }
 
     const players = await getAllPlayers();
-    if (players.length === 0) {
-      return NextResponse.json({ error: "No players have joined yet" }, { status: 400 });
+    if (players.length < MIN_PLAYERS_TO_START) {
+      return NextResponse.json(
+        { error: `At least ${MIN_PLAYERS_TO_START} players are required to start` },
+        { status: 400 }
+      );
     }
 
     await startGame();

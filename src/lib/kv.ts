@@ -4,7 +4,7 @@
  */
 
 import { redis } from "./redis";
-import { randomScoops } from "./flavors";
+import { dealOpeningHands, MIN_PLAYERS_TO_START } from "./flavors";
 import type { Player, SwapProposal, GameState, FlavorId } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -185,12 +185,19 @@ export async function getPendingProposalsForPlayer(
 export async function startGame(): Promise<void> {
   const players = await getAllPlayers();
 
+  if (players.length < MIN_PLAYERS_TO_START) {
+    throw new Error(`At least ${MIN_PLAYERS_TO_START} players are required to start`);
+  }
+
+  const openingHands = dealOpeningHands(players.length);
+
   const pipeline = redis.pipeline();
 
-  for (const player of players) {
+  for (let index = 0; index < players.length; index++) {
+    const player = players[index];
     const updated: Player = {
       ...player,
-      scoops: randomScoops(),
+      scoops: openingHands[index],
       hasWon: false,
       wonAt: null,
       lockedUntil: null,

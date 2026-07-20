@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
+import { MIN_PLAYERS_TO_START } from "@/lib/flavors";
 
 type GameStatus = "lobby" | "active" | "ended";
 type Summary = {
@@ -111,13 +112,13 @@ export default function HostPage() {
 
         <button
           onClick={handleStart}
-          disabled={starting || playerCount === 0}
+          disabled={starting || playerCount < MIN_PLAYERS_TO_START}
           className="w-[92vw] max-w-[34rem] px-[6vw] py-[2vh] min-h-[3.75rem] rounded-[min(1.25rem,4vw)] bg-amber-500 hover:bg-amber-600 active:bg-amber-700 disabled:bg-amber-200 disabled:cursor-not-allowed text-white font-black text-[clamp(1.05rem,3.8vw,1.6rem)] transition-colors shadow-lg"
         >
           {starting
             ? "Starting…"
-            : playerCount === 0
-            ? "Waiting for players…"
+            : playerCount < MIN_PLAYERS_TO_START
+            ? `Need ${MIN_PLAYERS_TO_START} players to start`
             : `Start Game — ${playerCount} ${playerCount === 1 ? "player" : "players"}`}
         </button>
       </main>
