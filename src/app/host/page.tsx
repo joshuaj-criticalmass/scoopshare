@@ -7,6 +7,7 @@ type GameStatus = "lobby" | "active" | "ended";
 type Summary = {
   status: GameStatus;
   playerCount: number;
+  joinedPlayers: { id: string; name: string; hasWon: boolean }[];
   winners: { name: string; wonAt: number | null }[];
 };
 
@@ -14,6 +15,7 @@ export default function HostPage() {
   const [summary, setSummary] = useState<Summary>({
     status: "lobby",
     playerCount: 0,
+    joinedPlayers: [],
     winners: [],
   });
   const [joinUrl, setJoinUrl] = useState("");
@@ -66,7 +68,7 @@ export default function HostPage() {
     }
   }
 
-  const { status, playerCount, winners } = summary;
+  const { status, playerCount, joinedPlayers, winners } = summary;
   const displayUrl = joinUrl.replace(/^https?:\/\//, "");
 
   // ── Pre-game (lobby) ───────────────────────────────────────────────────────
@@ -110,17 +112,41 @@ export default function HostPage() {
           </div>
         </div>
 
-        <button
-          onClick={handleStart}
-          disabled={starting || playerCount < MIN_PLAYERS_TO_START}
-          className="w-[92vw] max-w-[34rem] px-[6vw] py-[2vh] min-h-[3.75rem] rounded-[min(1.25rem,4vw)] bg-amber-500 hover:bg-amber-600 active:bg-amber-700 disabled:bg-amber-200 disabled:cursor-not-allowed text-white font-black text-[clamp(1.05rem,3.8vw,1.6rem)] transition-colors shadow-lg"
-        >
-          {starting
-            ? "Starting…"
-            : playerCount < MIN_PLAYERS_TO_START
-            ? `Need ${MIN_PLAYERS_TO_START} players to start`
-            : `Start Game — ${playerCount} ${playerCount === 1 ? "player" : "players"}`}
-        </button>
+        <div className="w-[92vw] max-w-[34rem] flex flex-col gap-[1.5vh]">
+          <div className="bg-white rounded-[min(1.25rem,4vw)] px-[4vw] py-[1.8vh] shadow-sm">
+            <p className="text-[clamp(0.8rem,2vw,0.95rem)] font-bold text-gray-400 uppercase tracking-wider mb-[1vh] text-center">
+              Joined Players
+            </p>
+            {joinedPlayers.length === 0 ? (
+              <p className="text-center text-gray-400 text-[clamp(0.9rem,2.8vw,1rem)]">
+                Waiting for players to join…
+              </p>
+            ) : (
+              <div className="flex flex-wrap justify-center gap-[1vh]">
+                {joinedPlayers.map((player) => (
+                  <span
+                    key={player.id}
+                    className="bg-amber-100 text-amber-800 px-[3vw] py-[0.7vh] rounded-full text-[clamp(0.82rem,2.4vw,0.95rem)] font-semibold"
+                  >
+                    {player.name}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={handleStart}
+            disabled={starting || playerCount < MIN_PLAYERS_TO_START}
+            className="w-full px-[6vw] py-[2vh] min-h-[3.75rem] rounded-[min(1.25rem,4vw)] bg-amber-500 hover:bg-amber-600 active:bg-amber-700 disabled:bg-amber-200 disabled:cursor-not-allowed text-white font-black text-[clamp(1.05rem,3.8vw,1.6rem)] transition-colors shadow-lg"
+          >
+            {starting
+              ? "Starting…"
+              : playerCount < MIN_PLAYERS_TO_START
+              ? `Need ${MIN_PLAYERS_TO_START} players to start`
+              : `Start Game — ${playerCount} ${playerCount === 1 ? "player" : "players"}`}
+          </button>
+        </div>
       </main>
     );
   }
@@ -158,8 +184,39 @@ export default function HostPage() {
         </div>
       </div>
 
-      {/* Winners section */}
-      <div className="flex-1">
+      {/* Players and winners */}
+      <div className="flex-1 grid grid-cols-1 xl:grid-cols-[1.1fr_1fr] gap-[2vh]">
+        <section className="bg-white/70 rounded-[min(1.4rem,3vw)] px-[4vw] py-[2vh] shadow-sm">
+          <div className="flex flex-wrap items-baseline gap-3 mb-[1.6vh]">
+            <h2 className="font-pacifico text-[clamp(1.5rem,4vw,2.4rem)] text-amber-600 leading-tight">
+              👥 Joined Players
+            </h2>
+            <span className="text-[clamp(0.95rem,2.6vw,1.25rem)] font-bold text-gray-400">
+              {joinedPlayers.length}
+            </span>
+          </div>
+
+          {joinedPlayers.length === 0 ? (
+            <p className="text-gray-400 text-[clamp(1rem,3vw,1.25rem)]">No players joined.</p>
+          ) : (
+            <div className="flex flex-wrap gap-[1vh]">
+              {joinedPlayers.map((player) => (
+                <span
+                  key={player.id}
+                  className={`px-[3vw] py-[0.8vh] rounded-full text-[clamp(0.82rem,2.2vw,1rem)] font-semibold ${
+                    player.hasWon
+                      ? "bg-amber-200 text-amber-900"
+                      : "bg-white text-gray-700"
+                  }`}
+                >
+                  {player.name}{player.hasWon ? " 🏆" : ""}
+                </span>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section>
         <div className="flex flex-wrap items-baseline gap-3 mb-[2vh]">
           <h2 className="font-pacifico text-[clamp(1.8rem,4.8vw,3rem)] text-amber-600 leading-tight">
             {isEnded ? "🎉 Final Results" : winners.length === 0 ? "🍦 Game in progress…" : "🏆 Winners so far"}
@@ -203,6 +260,7 @@ export default function HostPage() {
             ))}
           </div>
         )}
+        </section>
       </div>
     </main>
   );

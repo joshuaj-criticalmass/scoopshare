@@ -5,6 +5,11 @@ export async function GET() {
   try {
     const [gameState, players] = await Promise.all([getGameState(), getAllPlayers()]);
 
+    const joinedPlayers = players
+      .slice()
+      .sort((a, b) => a.joinedAt - b.joinedAt)
+      .map((p) => ({ id: p.id, name: p.name, hasWon: p.hasWon }));
+
     const winners = players
       .filter((p) => p.hasWon)
       .sort((a, b) => (a.wonAt ?? 0) - (b.wonAt ?? 0))
@@ -13,6 +18,7 @@ export async function GET() {
     return NextResponse.json({
       status: gameState.status,
       playerCount: players.length,
+      joinedPlayers,
       winners,
     });
   } catch (err) {
