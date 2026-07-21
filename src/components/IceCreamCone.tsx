@@ -8,6 +8,8 @@ interface IceCreamConeProps {
   /** Width value — number = px, string = any valid CSS width */
   size?: number | string;
   className?: string;
+  scoopClickable?: boolean;
+  onScoopClick?: (flavor: FlavorId, position: "top" | "middle" | "bottom") => void;
 }
 
 /** SVG pattern definitions for non-solid flavors */
@@ -84,7 +86,13 @@ function fillFor(uid: string, flavor: FlavorId): string {
     : `url(#p-${uid}-${flavor})`;
 }
 
-export function IceCreamCone({ scoops, size = 160, className = "" }: IceCreamConeProps) {
+export function IceCreamCone({
+  scoops,
+  size = 160,
+  className = "",
+  scoopClickable = false,
+  onScoopClick,
+}: IceCreamConeProps) {
   const rawId = useId();
   // useId returns values like ":r0:" — strip colons for valid SVG IDs
   const uid = rawId.replace(/:/g, "");
@@ -95,7 +103,7 @@ export function IceCreamCone({ scoops, size = 160, className = "" }: IceCreamCon
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 363.29 1014.28"
-      className={className}
+      className={`${className}${scoopClickable ? " cursor-pointer" : ""}`}
       style={{ width: size, height: "auto" }}
       aria-hidden="true"
     >
@@ -126,18 +134,24 @@ export function IceCreamCone({ scoops, size = 160, className = "" }: IceCreamCon
         id="bottom-scoop"
         fill={fillFor(uid, bottom)}
         filter={`url(#scoop-shadow-${uid})`}
+        onClick={() => onScoopClick?.(bottom, "bottom")}
+        style={scoopClickable ? { cursor: "pointer" } : undefined}
         d="M328.92 545.08c4.92-13.39 7.82-27.5 8.38-42.02 3.02-79.1-64.55-140.24-150.96-136.53-86.41 3.7-158.88 70.84-161.92 149.95-.55 14.51 1.29 28.43 5.18 41.44C12.86 564.96.69 580.39.03 597.8c-.88 23.17 18.9 41.06 44.2 39.96 20.66-.89 38.59-14.16 44.95-31.62 5.06 16.97 22.02 28.75 42.69 27.87 21.35-.92 39.74-15.06 45.51-33.38 4.39 17.88 21.76 30.49 43.1 29.58 20.67-.89 38.6-14.17 44.96-31.63 5.04 16.99 22 28.76 42.68 27.87 25.29-1.09 46.51-20.73 47.4-43.9.66-17.41-10.35-31.83-26.61-37.47"
       />
       <path
         id="middle-scoop"
         fill={fillFor(uid, middle)}
         filter={`url(#scoop-shadow-${uid})`}
+        onClick={() => onScoopClick?.(middle, "middle")}
+        style={scoopClickable ? { cursor: "pointer" } : undefined}
         d="M336.65 361.89c4.92-13.39 7.82-27.5 8.38-42.02 3.02-79.1-64.55-140.24-150.96-136.53-86.41 3.7-158.88 70.84-161.92 149.95-.55 14.51 1.29 28.43 5.18 41.44-16.74 7.04-28.91 22.47-29.57 39.88-.88 23.17 18.9 41.06 44.2 39.96 20.66-.89 38.59-14.16 44.95-31.62 5.06 16.97 22.02 28.75 42.69 27.87 21.35-.92 39.74-15.06 45.51-33.38 4.39 17.88 21.76 30.49 43.1 29.58 20.67-.89 38.6-14.17 44.96-31.63 5.04 16.99 22 28.76 42.68 27.87 25.29-1.09 46.51-20.73 47.4-43.9.66-17.41-10.35-31.83-26.61-37.47"
       />
       <path
         id="top-scoop"
         fill={fillFor(uid, top)}
         filter={`url(#scoop-shadow-${uid})`}
+        onClick={() => onScoopClick?.(top, "top")}
+        style={scoopClickable ? { cursor: "pointer" } : undefined}
         d="M336.65 178.71c4.92-13.39 7.82-27.5 8.38-42.02C348.05 57.59 280.48-3.55 194.07.16 107.66 3.86 35.18 71 32.15 150.11c-.55 14.51 1.29 28.43 5.18 41.44-16.74 7.04-28.91 22.47-29.57 39.88-.88 23.17 18.9 41.06 44.2 39.96 20.66-.89 38.59-14.16 44.95-31.62 5.06 16.97 22.02 28.75 42.69 27.87 21.35-.92 39.74-15.06 45.51-33.38 4.39 17.88 21.76 30.49 43.1 29.58 20.67-.89 38.6-14.17 44.96-31.63 5.04 16.99 22 28.76 42.68 27.87 25.29-1.09 46.51-20.73 47.4-43.9.66-17.41-10.35-31.83-26.61-37.47"
       />
     </svg>

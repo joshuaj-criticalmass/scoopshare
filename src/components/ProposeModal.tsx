@@ -12,23 +12,32 @@ interface PlayerSummary {
 interface ProposeModalProps {
   playerId: string;
   playerScoops: [FlavorId, FlavorId, FlavorId];
+  initialOfferedFlavor?: FlavorId | null;
   onClose: () => void;
   onNoMatch: (lockedUntil: number) => void;
 }
 
 const SCOOP_LABELS = ["Top", "Middle", "Bottom"] as const;
 
-export function ProposeModal({ playerId, playerScoops, onClose, onNoMatch }: ProposeModalProps) {
+export function ProposeModal({
+  playerId,
+  playerScoops,
+  initialOfferedFlavor = null,
+  onClose,
+  onNoMatch,
+}: ProposeModalProps) {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [players, setPlayers] = useState<PlayerSummary[]>([]);
   const [loadingPlayers, setLoadingPlayers] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedPlayer, setSelectedPlayer] = useState<PlayerSummary | null>(null);
-  const [offeredFlavor, setOfferedFlavor] = useState<FlavorId | null>(null);
+  const [offeredFlavor, setOfferedFlavor] = useState<FlavorId | null>(initialOfferedFlavor);
   const [requestedFlavor, setRequestedFlavor] = useState<FlavorId | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
+
+  const stepSequence = initialOfferedFlavor ? [1, 3] as const : [1, 2, 3] as const;
 
   useEffect(() => {
     fetch("/api/players")
@@ -43,6 +52,18 @@ export function ProposeModal({ playerId, playerScoops, onClose, onNoMatch }: Pro
   useEffect(() => {
     if (step === 1) searchRef.current?.focus();
   }, [step]);
+
+  function handleBack() {
+    if (step === 3 && initialOfferedFlavor) {
+      setRequestedFlavor(null);
+      setError("");
+      setStep(1);
+      return;
+    }
+
+    setError("");
+    setStep((s) => (s - 1) as 1 | 2 | 3);
+  }
 
   const filteredPlayers = players.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
@@ -95,7 +116,7 @@ export function ProposeModal({ playerId, playerScoops, onClose, onNoMatch }: Pro
           <div className="flex items-center gap-3">
             {step > 1 && (
               <button
-                onClick={() => setStep((s) => (s - 1) as 1 | 2 | 3)}
+                onClick={handleBack}
                 className="text-gray-400 hover:text-gray-600 text-[clamp(1.1rem,4vw,1.3rem)] leading-none"
                 aria-label="Back"
               >
@@ -119,11 +140,13 @@ export function ProposeModal({ playerId, playerScoops, onClose, onNoMatch }: Pro
 
         {/* Step indicators */}
         <div className="flex gap-1.5 px-[4vw] py-[1vh]">
-          {[1, 2, 3].map((s) => (
+          {stepSequence.map((s) => (
             <div
               key={s}
               className={`h-1 flex-1 rounded-full transition-colors ${
-                s <= step ? "bg-amber-400" : "bg-gray-100"
+                (s === 1 && step >= 1) || (s === 3 && step === 3) || s < step
+                  ? "bg-amber-400"
+                  : "bg-gray-100"
               }`}
             />
           ))}
@@ -154,7 +177,9 @@ export function ProposeModal({ playerId, playerScoops, onClose, onNoMatch }: Pro
                       <button
                         onClick={() => {
                           setSelectedPlayer(p);
-                          setStep(2);
+                          setRequestedFlavor(null);
+                          setError("");
+                          setStep(initialOfferedFlavor ? 3 : 2);
                         }}
                         className="w-full text-left px-[4vw] py-[1.6vh] rounded-[min(1rem,4vw)] border-2 border-gray-100 hover:border-amber-300 hover:bg-amber-50 transition-colors flex items-center justify-between gap-3"
                       >

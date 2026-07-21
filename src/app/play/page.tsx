@@ -13,6 +13,7 @@ export default function PlayPage() {
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [playerName, setPlayerName] = useState("Player");
   const [showProposeModal, setShowProposeModal] = useState(false);
+  const [selectedOfferedFlavor, setSelectedOfferedFlavor] = useState<(typeof FLAVOR_IDS)[number] | null>(null);
   const [localLockedUntil, setLocalLockedUntil] = useState<number | null>(null);
   const [dismissedProposals, setDismissedProposals] = useState<Set<string>>(new Set());
   const [respondingTo, setRespondingTo] = useState<string | null>(null);
@@ -106,6 +107,11 @@ export default function PlayPage() {
     } finally {
       setRespondingTo(null);
     }
+  }
+
+  function openProposeModal(offeredFlavor: (typeof FLAVOR_IDS)[number] | null = null) {
+    setSelectedOfferedFlavor(offeredFlavor);
+    setShowProposeModal(true);
   }
 
   // ── Lobby ──────────────────────────────────────────────────────────────────
@@ -219,6 +225,9 @@ export default function PlayPage() {
           <p className="text-[clamp(0.7rem,2.8vw,0.8rem)] font-bold text-gray-400 uppercase tracking-wider">
             {playerName}&apos;s Cone
           </p>
+          <p className="text-[clamp(0.76rem,3vw,0.88rem)] text-gray-500 text-center max-w-[82vw]">
+            Tap a scoop to trade that flavor faster, or use the button below for the full flow.
+          </p>
           <div className="relative flex items-start justify-center pt-[5.5vh]">
             {player.hasWon && (
               <Cherry
@@ -227,7 +236,14 @@ export default function PlayPage() {
                 className="absolute left-1/2 top-0 z-10 -translate-x-1/2 drop-shadow-md"
               />
             )}
-            <IceCreamCone scoops={player.scoops} size="clamp(7.2rem, 34vw, 10.5rem)" />
+            <IceCreamCone
+              scoops={player.scoops}
+              size="clamp(7.2rem, 34vw, 10.5rem)"
+              onScoopClick={(flavor) => {
+                if (!isLocked) openProposeModal(flavor);
+              }}
+              scoopClickable={!isLocked}
+            />
           </div>
           <div className="flex flex-col gap-[0.8vh] w-[65vw] max-w-[13rem]">
             {player.scoops.map((flavor, i) => (
@@ -248,7 +264,7 @@ export default function PlayPage() {
         {/* ── Propose button ── */}
         <div className="w-[92vw] max-w-[25rem]">
           <button
-            onClick={() => setShowProposeModal(true)}
+            onClick={() => openProposeModal()}
             disabled={isLocked}
             className="w-full min-h-[3.5rem] py-[1.8vh] rounded-[min(1.25rem,4vw)] bg-amber-500 hover:bg-amber-600 active:bg-amber-700 disabled:bg-amber-200 disabled:cursor-not-allowed text-white font-bold text-[clamp(1rem,4.2vw,1.35rem)] transition-colors"
           >
@@ -282,7 +298,11 @@ export default function PlayPage() {
           <ProposeModal
             playerId={playerId as string}
             playerScoops={player.scoops}
-            onClose={() => setShowProposeModal(false)}
+            initialOfferedFlavor={selectedOfferedFlavor}
+            onClose={() => {
+              setShowProposeModal(false);
+              setSelectedOfferedFlavor(null);
+            }}
             onNoMatch={(lu) => setLocalLockedUntil(lu)}
           />
         )}
