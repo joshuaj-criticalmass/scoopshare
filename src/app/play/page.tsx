@@ -8,6 +8,8 @@ import { ProposeModal } from "@/components/ProposeModal";
 import { Confetti } from "@/components/Confetti";
 import { Cherry } from "@/components/Cherry";
 
+const WIN_CHERRY_DELAY_MS = 920;
+
 export default function PlayPage() {
   const router = useRouter();
   const [playerId, setPlayerId] = useState<string | null>(null);
@@ -67,13 +69,15 @@ export default function PlayPage() {
     if (currentHasWon && !hasWonRef.current) {
       hasWonRef.current = true;
       setShowConfetti(true);
-      setShowCherryDrop(true);
+      setShowCherryDrop(false);
       setShowWinModal(false);
       setShowProposeModal(false);
       setSelectedOfferedFlavor(null);
+      const cherryTimer = setTimeout(() => setShowCherryDrop(true), WIN_CHERRY_DELAY_MS);
       const modalTimer = setTimeout(() => setShowWinModal(true), 60);
       const t = setTimeout(() => setShowConfetti(false), 4500);
       return () => {
+        clearTimeout(cherryTimer);
         clearTimeout(modalTimer);
         clearTimeout(t);
       };
@@ -111,7 +115,11 @@ export default function PlayPage() {
   if (!playerId || gameState.status === "loading") {
     return (
       <main className="min-h-[100dvh] flex items-center justify-center px-[6vw]">
-        <IceCreamCone scoops={["vanilla", "vanilla", "vanilla"]} size="clamp(4.75rem, 22vw, 6.5rem)" className="animate-bounce" />
+        <IceCreamCone
+          scoops={["vanilla", "vanilla", "vanilla"]}
+          size="clamp(4.75rem, 22vw, 6.5rem)"
+          animationMode="loop"
+        />
       </main>
     );
   }
@@ -154,7 +162,11 @@ export default function PlayPage() {
   if (gameStatus === "lobby") {
     return (
       <main className="min-h-[100dvh] flex flex-col items-center justify-center px-[6vw] py-[4vh] gap-[3vh] text-center overflow-x-hidden">
-        <IceCreamCone scoops={["strawberry", "cookies-and-cream", "bubblegum"]} size="clamp(5rem, 23vw, 7rem)" className="animate-bounce" />
+        <IceCreamCone
+          scoops={["strawberry", "cookies-and-cream", "bubblegum"]}
+          size="clamp(5rem, 23vw, 7rem)"
+          animationMode="loop"
+        />
 
         <div className="max-w-[88vw]">
           <h1 className="font-pacifico text-[clamp(1.8rem,7vw,2.6rem)] leading-tight text-amber-600 mb-[1vh]">
@@ -274,6 +286,7 @@ export default function PlayPage() {
             <IceCreamCone
               scoops={player.scoops}
               size="clamp(7.2rem, 34vw, 10.5rem)"
+              animationMode={player.hasWon ? "once" : "off"}
               onScoopClick={(flavor) => {
                 if (!isLocked && canTrade) openProposeModal(flavor);
               }}

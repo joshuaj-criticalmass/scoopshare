@@ -23,6 +23,99 @@
   }
 }
 
+@keyframes ice-cream-cone-rise {
+  0% {
+    transform: translateY(0) scaleY(1);
+  }
+  16% {
+    transform: translateY(-64px) scaleY(0.97);
+  }
+  17% {
+    transform: translateY(14px) scaleY(1.025);
+  }
+  25% {
+    transform: translateY(-6px) scaleY(0.992);
+  }
+  32% {
+    transform: translateY(0) scaleY(1);
+  }
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+@keyframes ice-cream-scoop-drop-bottom {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  16% {
+    transform: translateY(-64px) scale(0.97);
+  }
+  24% {
+    transform: translateY(-64px) scale(0.97);
+  }
+  36% {
+    transform: translateY(14px) scale(1.025);
+  }
+  46% {
+    transform: translateY(-6px) scale(0.992);
+  }
+  54% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes ice-cream-scoop-drop-middle {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  16% {
+    transform: translateY(-64px) scale(0.97);
+  }
+  31% {
+    transform: translateY(-64px) scale(0.97);
+  }
+  43% {
+    transform: translateY(14px) scale(1.025);
+  }
+  53% {
+    transform: translateY(-6px) scale(0.992);
+  }
+  61% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes ice-cream-scoop-drop-top {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  16% {
+    transform: translateY(-64px) scale(0.97);
+  }
+  38% {
+    transform: translateY(-64px) scale(0.97);
+  }
+  50% {
+    transform: translateY(14px) scale(1.025);
+  }
+  60% {
+    transform: translateY(-6px) scale(0.992);
+  }
+  68% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
 @layer base {
   :root {
     --font-nunito: "Nunito", sans-serif;
@@ -59,6 +152,42 @@ body {
 }
 
 @layer utilities {
+  .ice-cream-cone-rise {
+    transform-box: fill-box;
+    transform-origin: center bottom;
+    animation-duration: 1.3s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-name: ice-cream-cone-rise;
+  }
+
+  .ice-cream-scoop-drop {
+    transform-box: fill-box;
+    transform-origin: center bottom;
+    animation-duration: 1.3s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .ice-cream-animation-loop {
+    animation-iteration-count: infinite;
+  }
+
+  .ice-cream-animation-once {
+    animation-iteration-count: 1;
+    animation-fill-mode: both;
+  }
+
+  .ice-cream-scoop-drop-bottom {
+    animation-name: ice-cream-scoop-drop-bottom;
+  }
+
+  .ice-cream-scoop-drop-middle {
+    animation-name: ice-cream-scoop-drop-middle;
+  }
+
+  .ice-cream-scoop-drop-top {
+    animation-name: ice-cream-scoop-drop-top;
+  }
+
   .text-balance {
     text-wrap: balance;
   }

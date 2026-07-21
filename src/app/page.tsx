@@ -55,7 +55,8 @@ export default function JoinPage() {
     <main className="min-h-[100dvh] flex flex-col items-center justify-center px-[6vw] py-[4vh] gap-[3vh] overflow-x-hidden">
       <IceCreamCone
         scoops={["bubblegum", "mint-choc-chip", "strawberry"]}
-        size="clamp(5.5rem, 24vw, 7.5rem)"
+        size="clamp(6.6rem, 28vw, 9rem)"
+        animationMode="loop"
       />
 
       <div className="text-center max-w-[88vw]">
