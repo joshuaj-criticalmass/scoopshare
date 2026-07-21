@@ -2,6 +2,8 @@ export type FlavorId =
   | "vanilla"
   | "chocolate"
   | "strawberry"
+  | "ube"
+  | "pistachio"
   | "mint-choc-chip"
   | "cookies-and-cream"
   | "bubblegum";

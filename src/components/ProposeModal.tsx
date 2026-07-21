@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { FlavorId } from "@/lib/types";
 import { FLAVORS, FLAVOR_IDS } from "@/lib/flavors";
+import { FlavorSwatch } from "@/components/IceCreamCone";
 
 interface PlayerSummary {
   id: string;
@@ -111,7 +112,7 @@ export function ProposeModal({
       className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-[4vw]"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-white rounded-[min(1.5rem,4vw)] w-[92vw] max-w-[26rem] max-h-[88dvh] flex flex-col overflow-hidden shadow-2xl">
+      <div className="bg-white rounded-[min(1.5rem,4vw)] w-[92vw] max-w-[26rem] sm:max-w-[34rem] lg:max-w-[42rem] max-h-[88dvh] flex flex-col overflow-hidden shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between px-[4vw] pt-[2vh] pb-[1.2vh] border-b border-gray-100">
           <div className="flex items-center gap-3">
@@ -201,7 +202,7 @@ export function ProposeModal({
                 Trading with <strong>{selectedPlayer?.name}</strong>
               </p>
               {playerScoops.map((flavor, i) => {
-                const { label, color } = FLAVORS[flavor];
+                const { label } = FLAVORS[flavor];
                 return (
                   <button
                     key={i}
@@ -211,10 +212,7 @@ export function ProposeModal({
                     }}
                     className="w-full flex items-center gap-4 px-[4vw] py-[1.7vh] rounded-[min(1rem,4vw)] border-2 border-gray-100 hover:border-amber-300 hover:bg-amber-50 transition-colors"
                   >
-                    <span
-                      className="w-[9vw] h-[9vw] max-w-[2.5rem] max-h-[2.5rem] rounded-full border-2 border-white shadow flex-shrink-0"
-                      style={{ background: color }}
-                    />
+                    <FlavorSwatch flavor={flavor} size="clamp(2.1rem, 7vw, 3rem)" className="flex-shrink-0" />
                     <div className="text-left">
                       <p className="text-[clamp(0.68rem,2.7vw,0.75rem)] font-bold text-gray-400 uppercase tracking-wider">{SCOOP_LABELS[i]}</p>
                       <p className="font-semibold text-[clamp(0.92rem,3.7vw,1rem)] text-gray-700">{label}</p>
@@ -231,25 +229,22 @@ export function ProposeModal({
               <p className="text-[clamp(0.82rem,3.2vw,0.92rem)] text-gray-500 text-center leading-snug">
                 Giving up <strong>{offeredFlavor ? FLAVORS[offeredFlavor].label : ""}</strong> — what do you want?
               </p>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                 {FLAVOR_IDS.map((fid) => {
-                  const { label, color } = FLAVORS[fid];
+                  const { label } = FLAVORS[fid];
                   const selected = requestedFlavor === fid;
                   return (
                     <button
                       key={fid}
                       onClick={() => setRequestedFlavor(fid)}
-                      className={`flex items-center gap-3 px-[3vw] py-[1.4vh] rounded-[min(1rem,4vw)] border-2 transition-colors ${
+                      className={`flex flex-col items-center justify-center gap-2 px-[2.4vw] py-[1.5vh] min-h-[7rem] rounded-[min(1rem,4vw)] border-2 text-center transition-colors ${
                         selected
                           ? "border-amber-400 bg-amber-50"
                           : "border-gray-100 hover:border-amber-200 hover:bg-amber-50"
                       }`}
                     >
-                      <span
-                        className="w-[7vw] h-[7vw] max-w-[2rem] max-h-[2rem] rounded-full border-2 border-white shadow flex-shrink-0"
-                        style={{ background: color }}
-                      />
-                      <span className="text-[clamp(0.8rem,3.2vw,0.92rem)] font-semibold text-gray-700 text-left leading-tight">{label}</span>
+                      <FlavorSwatch flavor={fid} size="clamp(2rem, 6vw, 2.7rem)" className="flex-shrink-0" />
+                      <span className="text-[clamp(0.8rem,3vw,0.92rem)] font-semibold text-gray-700 leading-tight">{label}</span>
                     </button>
                   );
                 })}

@@ -185,8 +185,8 @@ export default function HostPage() {
       </div>
 
       {/* Players and winners */}
-      <div className="flex-1 grid grid-cols-1 xl:grid-cols-[1.1fr_1fr] gap-[2vh]">
-        <section className="bg-white/70 rounded-[min(1.4rem,3vw)] px-[4vw] py-[2vh] shadow-sm">
+      <div className="flex-1 grid grid-cols-1 xl:grid-cols-[minmax(18rem,0.8fr)_minmax(34rem,1.2fr)] gap-[2vh] items-start">
+        <section className="bg-white/70 rounded-[min(1.4rem,3vw)] px-[4vw] py-[2vh] shadow-sm xl:sticky xl:top-[3vh]">
           <div className="flex flex-wrap items-baseline gap-3 mb-[1.6vh]">
             <h2 className="font-pacifico text-[clamp(1.5rem,4vw,2.4rem)] text-amber-600 leading-tight">
               👥 Joined Players
@@ -216,7 +216,7 @@ export default function HostPage() {
           )}
         </section>
 
-        <section>
+        <section className="min-w-0">
         <div className="flex flex-wrap items-baseline gap-3 mb-[2vh]">
           <h2 className="font-pacifico text-[clamp(1.8rem,4.8vw,3rem)] text-amber-600 leading-tight">
             {isEnded ? "🎉 Final Results" : winners.length === 0 ? "🍦 Game in progress…" : "🏆 Winners so far"}
@@ -233,16 +233,16 @@ export default function HostPage() {
             First to collect 3 matching scoops wins!
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[1.6vh]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-[1.6vh]">
             {winners.map((w, i) => (
               <div
                 key={`${w.name}-${w.wonAt}`}
-                className={`flex items-center gap-[3vw] bg-white rounded-[min(1.4rem,3vw)] px-[4vw] py-[1.8vh] shadow-sm border-2 ${
+                className={`grid grid-cols-[auto_1fr] items-center gap-[1.2rem] bg-white rounded-[min(1.4rem,3vw)] px-[clamp(1rem,2vw,1.6rem)] py-[1.8vh] shadow-sm border-2 min-h-[7.5rem] ${
                   i === 0 ? "border-amber-400" : "border-transparent"
                 }`}
               >
                 <span
-                  className={`text-[clamp(1.8rem,5vw,3rem)] font-black leading-none w-[14vw] max-w-[3.5rem] text-center ${
+                  className={`text-[clamp(2rem,4vw,3.25rem)] font-black leading-none w-[4.5rem] text-center ${
                     i === 0 ? "text-amber-500" : i === 1 ? "text-gray-400" : "text-amber-300"
                   }`}
                 >

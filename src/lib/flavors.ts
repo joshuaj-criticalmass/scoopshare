@@ -4,6 +4,8 @@ export const FLAVORS: Record<FlavorId, FlavorConfig> = {
   vanilla: { label: "Vanilla", color: "#F5E6C8", pattern: "solid" },
   chocolate: { label: "Chocolate", color: "#6B4226", pattern: "solid" },
   strawberry: { label: "Strawberry", color: "#F4A6B0", pattern: "swirl" },
+  ube: { label: "Ube", color: "#B993D6", pattern: "swirl" },
+  pistachio: { label: "Pistachio", color: "#B8D59B", pattern: "solid" },
   "mint-choc-chip": { label: "Mint Choc Chip", color: "#A8D8C0", pattern: "chips" },
   "cookies-and-cream": { label: "Cookies & Cream", color: "#EDEDED", pattern: "dots" },
   bubblegum: { label: "Bubblegum", color: "#F9B4E0", pattern: "sprinkles" },

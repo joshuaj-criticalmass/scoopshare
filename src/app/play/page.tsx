@@ -252,21 +252,7 @@ export default function PlayPage() {
               Tap a scoop to propose a swap.
             </p>
           )}
-          <div className="relative flex items-start justify-center pt-[9.5vh]">
-            {player.hasWon && (
-              <div
-                className={`absolute left-1/2 top-0 z-20 w-[78vw] max-w-[19rem] -translate-x-1/2 rounded-[min(1.2rem,4vw)] border border-white/60 bg-white/82 px-[4vw] py-[1.5vh] text-center shadow-xl backdrop-blur-sm transition-all duration-500 ${
-                  showWinModal ? "opacity-100 translate-y-0 scale-100" : "opacity-0 -translate-y-2 scale-95"
-                }`}
-              >
-                <p className="font-pacifico text-[clamp(1.15rem,4.8vw,1.55rem)] leading-none text-amber-600">
-                  You won {ordinal(player.winPlace)} place!
-                </p>
-                <p className="mt-[0.5vh] text-[clamp(0.8rem,3.1vw,0.92rem)] text-gray-600">
-                  Hang tight while the host resets or starts the next round.
-                </p>
-              </div>
-            )}
+          <div className="relative flex items-start justify-center pt-[5.5vh]">
             {player.hasWon && (
               <Cherry
                 size="clamp(2rem, 9vw, 2.9rem)"
@@ -284,6 +270,21 @@ export default function PlayPage() {
             />
           </div>
         </div>
+
+        {player.hasWon && (
+          <div
+            className={`fixed left-1/2 top-1/2 z-30 w-[82vw] max-w-[23rem] -translate-x-1/2 -translate-y-1/2 rounded-[min(1.3rem,4vw)] border border-white/60 bg-white/84 px-[5vw] py-[2vh] text-center shadow-2xl backdrop-blur-md transition-all duration-500 pointer-events-none ${
+              showWinModal ? "opacity-100 scale-100" : "opacity-0 scale-95"
+            }`}
+          >
+            <p className="font-pacifico text-[clamp(1.4rem,5.2vw,2rem)] leading-none text-amber-600">
+              You won {ordinal(player.winPlace)} place!
+            </p>
+            <p className="mt-[0.8vh] text-[clamp(0.85rem,3.1vw,1rem)] text-gray-600">
+              Hang tight while the host resets or starts the next round.
+            </p>
+          </div>
+        )}
 
         {isLocked && canTrade && (
           <div className="w-[92vw] max-w-[25rem] bg-amber-50 border border-amber-200 rounded-[min(1rem,4vw)] px-[4vw] py-[1.4vh] text-center">
