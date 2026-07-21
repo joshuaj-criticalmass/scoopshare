@@ -12,6 +12,12 @@ interface IceCreamConeProps {
   onScoopClick?: (flavor: FlavorId, position: "top" | "middle" | "bottom") => void;
 }
 
+interface FlavorSwatchProps {
+  flavor: FlavorId;
+  size?: number | string;
+  className?: string;
+}
+
 /** SVG pattern definitions for non-solid flavors */
 function FlavorPatterns({ uid, flavors }: { uid: string; flavors: FlavorId[] }) {
   return (
@@ -84,6 +90,27 @@ function fillFor(uid: string, flavor: FlavorId): string {
   return FLAVORS[flavor].pattern === "solid"
     ? FLAVORS[flavor].color
     : `url(#p-${uid}-${flavor})`;
+}
+
+export function FlavorSwatch({ flavor, size = 32, className = "" }: FlavorSwatchProps) {
+  const rawId = useId();
+  const uid = rawId.replace(/:/g, "");
+
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 100 100"
+      className={className}
+      style={{ width: size, height: size }}
+      aria-hidden="true"
+    >
+      <defs>
+        <FlavorPatterns uid={uid} flavors={[flavor]} />
+      </defs>
+      <circle cx="50" cy="50" r="46" fill={fillFor(uid, flavor)} stroke="#ffffff" strokeWidth="6" />
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#d1d5db" strokeWidth="2" />
+    </svg>
+  );
 }
 
 export function IceCreamCone({

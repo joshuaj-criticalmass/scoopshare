@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useGameState } from "@/hooks/useGameState";
 import { FLAVORS, FLAVOR_IDS } from "@/lib/flavors";
-import { IceCreamCone } from "@/components/IceCreamCone";
+import { FlavorSwatch, IceCreamCone } from "@/components/IceCreamCone";
 import { ProposeModal } from "@/components/ProposeModal";
 import { Confetti } from "@/components/Confetti";
 import { Cherry } from "@/components/Cherry";
@@ -187,8 +187,6 @@ export default function PlayPage() {
       (p) => !dismissedProposals.has(p.id)
         )
       : [];
-    const SCOOP_POSITIONS = ["Top", "Middle", "Bottom"] as const;
-
     return (
       <main className="min-h-[100dvh] flex flex-col items-center px-[4vw] py-[3vh] gap-[2.2vh] overflow-x-hidden">
 
@@ -242,7 +240,7 @@ export default function PlayPage() {
 
         {/* ── Cone + scoop labels ── */}
         <div className="flex flex-col items-center gap-[1.2vh] w-full">
-          <p className="text-[clamp(0.7rem,2.8vw,0.8rem)] font-bold text-gray-400 uppercase tracking-wider">
+          <p className="font-pacifico text-[clamp(1.35rem,5vw,1.9rem)] text-amber-600 leading-none text-center">
             {playerName}&apos;s Cone
           </p>
           {player.hasWon ? (
@@ -285,20 +283,6 @@ export default function PlayPage() {
               scoopClickable={!isLocked && canTrade}
             />
           </div>
-          <div className="flex flex-col gap-[0.8vh] w-[65vw] max-w-[13rem]">
-            {player.scoops.map((flavor, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <span
-                  className="w-[4vw] h-[4vw] max-w-[1rem] max-h-[1rem] rounded-full border border-gray-200 flex-shrink-0"
-                  style={{ background: FLAVORS[flavor].color }}
-                />
-                <span className="text-[clamp(0.76rem,3vw,0.85rem)] text-gray-500 font-medium leading-tight">
-                  {SCOOP_POSITIONS[i]}:{" "}
-                  <span className="text-gray-700 font-semibold">{FLAVORS[flavor].label}</span>
-                </span>
-              </div>
-            ))}
-          </div>
         </div>
 
         {isLocked && canTrade && (
@@ -316,13 +300,10 @@ export default function PlayPage() {
           </p>
           <div className="grid grid-cols-2 gap-[1vh]">
             {FLAVOR_IDS.map((fid) => {
-              const { label, color } = FLAVORS[fid];
+              const { label } = FLAVORS[fid];
               return (
                 <div key={fid} className="flex items-center gap-2">
-                  <span
-                    className="w-[4vw] h-[4vw] max-w-[1rem] max-h-[1rem] rounded-full border border-gray-200 flex-shrink-0"
-                    style={{ background: color }}
-                  />
+                  <FlavorSwatch flavor={fid} size="clamp(1.5rem, 8vw, 2rem)" className="flex-shrink-0" />
                   <span className="text-[clamp(0.76rem,3vw,0.85rem)] text-gray-600">{label}</span>
                 </div>
               );
