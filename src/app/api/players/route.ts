@@ -4,6 +4,8 @@ import { getAllPlayers } from "@/lib/kv";
 export async function GET() {
   const players = await getAllPlayers();
   return NextResponse.json(
-    players.map(({ id, name, hasWon }) => ({ id, name, hasWon }))
+    players
+      .filter((player) => !player.hasWon)
+      .map(({ id, name, hasWon }) => ({ id, name, hasWon }))
   );
 }

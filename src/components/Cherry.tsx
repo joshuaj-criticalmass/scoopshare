@@ -21,13 +21,14 @@ export function Cherry({ size = 54, className = "", animateDrop = false }: Cherr
           ? {
               width: size,
               height: "auto",
+              overflow: "visible",
               animation: "cherry-drop 1200ms cubic-bezier(0.2, 0.9, 0.18, 1) both",
             }
-          : { width: size, height: "auto" }
+          : { width: size, height: "auto", overflow: "visible" }
       }
     >
       <defs>
-        <filter id={`cherry-shadow-${uid}`} x="-20%" y="-15%" width="150%" height="160%">
+        <filter id={`cherry-shadow-${uid}`} x="-35%" y="-25%" width="190%" height="220%">
           <feDropShadow dx="0" dy="16" stdDeviation="10" floodColor="#5c1215" floodOpacity="0.28" />
         </filter>
       </defs>

@@ -81,8 +81,19 @@ export default function PlayPage() {
 
     if (currentHasWon) {
       setShowWinModal(true);
+      return;
     }
+
+    hasWonRef.current = false;
+    setShowWinModal(false);
+    setShowCherryDrop(false);
   }, [currentHasWon]);
+
+  useEffect(() => {
+    if (gameState.status !== "ok" || gameState.gameStatus !== "active") return;
+    setDismissedProposals(new Set());
+    setLocalLockedUntil(null);
+  }, [gameState]);
 
   useEffect(() => {
     if (effectiveLockedUntil <= Date.now()) {
@@ -157,7 +168,7 @@ export default function PlayPage() {
         {/* Flavor legend preview */}
         <div className="bg-white rounded-[min(1.25rem,4vw)] p-[max(0.9rem,2vh)] w-[88vw] max-w-[24rem] shadow-sm">
           <p className="text-[clamp(0.7rem,2.9vw,0.8rem)] font-bold text-gray-400 uppercase tracking-wider mb-[1.2vh]">
-            Flavors you might get
+            Flavours you might get
           </p>
           <div className="grid grid-cols-2 gap-[1.2vh]">
             {FLAVOR_IDS.map((id) => {
@@ -297,7 +308,7 @@ export default function PlayPage() {
         {/* ── Flavor legend ── */}
         <div className="bg-white rounded-[min(1.2rem,4vw)] p-[max(0.85rem,1.8vh)] w-[92vw] max-w-[25rem] shadow-sm">
           <p className="text-[clamp(0.7rem,2.8vw,0.8rem)] font-bold text-gray-400 uppercase tracking-wider mb-[1vh] text-center">
-            Flavor Guide
+            Flavour Guide
           </p>
           <div className="grid grid-cols-2 gap-[1vh]">
             {FLAVOR_IDS.map((fid) => {

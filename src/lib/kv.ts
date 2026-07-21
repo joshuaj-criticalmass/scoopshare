@@ -4,7 +4,7 @@
  */
 
 import { redis } from "./redis";
-import { dealOpeningHands, MIN_PLAYERS_TO_START } from "./flavors";
+import { dealOpeningHands, MIN_PLAYERS_TO_START, WINNERS_TO_END_GAME } from "./flavors";
 import type { Player, SwapProposal, GameState, FlavorId } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -66,6 +66,35 @@ export async function getAllPlayers(): Promise<Player[]> {
   const results = await pipeline.exec();
 
   return (results as (Player | null)[]).filter((p): p is Player => p !== null);
+}
+
+async function clearAllProposals(): Promise<void> {
+  const playerIds = await getAllPlayerIds();
+  if (playerIds.length === 0) return;
+
+  const readPipeline = redis.pipeline();
+  for (const pid of playerIds) {
+    readPipeline.smembers(KEY.playerProposals(pid));
+  }
+  const results = await readPipeline.exec();
+
+  const allProposalIds = new Set<string>();
+  for (const proposalIds of results as string[][]) {
+    if (!Array.isArray(proposalIds)) continue;
+    for (const proposalId of proposalIds) {
+      allProposalIds.add(proposalId);
+    }
+  }
+
+  const writePipeline = redis.pipeline();
+  for (const pid of playerIds) {
+    writePipeline.del(KEY.playerProposals(pid));
+  }
+  for (const proposalId of Array.from(allProposalIds)) {
+    writePipeline.del(KEY.proposal(proposalId));
+  }
+
+  await writePipeline.exec();
 }
 
 /** Adds a playerId to the global index (idempotent). */
@@ -191,6 +220,8 @@ export async function startGame(): Promise<void> {
 
   const openingHands = dealOpeningHands(players.length);
 
+  await clearAllProposals();
+
   const pipeline = redis.pipeline();
 
   for (let index = 0; index < players.length; index++) {
@@ -214,41 +245,29 @@ export async function startGame(): Promise<void> {
   await pipeline.exec();
 }
 
+export async function startNewGame(): Promise<void> {
+  const gameState = await getGameState();
+  if (gameState.status !== "ended") {
+    throw new Error("Game must be ended before starting a new round");
+  }
+
+  await startGame();
+}
+
 /**
  * Wipes all players, proposals, and game state back to a clean lobby.
  * Called by /api/host/reset.
  */
 export async function resetGame(): Promise<void> {
-  const [playerIds, proposalPlayerIds] = await Promise.all([
-    getAllPlayerIds(),
-    // Scan for all proposalsByPlayer keys
-    redis.smembers(KEY.playerIndex),
-  ]);
+  const playerIds = await getAllPlayerIds();
 
-  // Collect all proposal IDs from every player's inbox
-  const allProposalIds: string[] = [];
-  if (playerIds.length > 0) {
-    const pipeline = redis.pipeline();
-    for (const pid of playerIds) {
-      pipeline.smembers(KEY.playerProposals(pid));
-    }
-    const results = await pipeline.exec();
-    for (const r of results as string[][]) {
-      if (Array.isArray(r)) allProposalIds.push(...r);
-    }
-  }
+  await clearAllProposals();
 
   // Delete everything in one pipeline
   const pipeline = redis.pipeline();
 
   for (const id of playerIds) {
     pipeline.del(KEY.player(id));
-    pipeline.del(KEY.playerProposals(id));
-  }
-
-  const uniqueProposalIds = Array.from(new Set(allProposalIds));
-  for (const id of uniqueProposalIds) {
-    pipeline.del(KEY.proposal(id));
   }
 
   pipeline.del(KEY.playerIndex);
@@ -359,9 +378,10 @@ export async function respondToProposal(
   }
 
   // Accept — re-validate both players still hold the required scoops
-  const [fromPlayer, toPlayer] = await Promise.all([
+  const [fromPlayer, toPlayer, gameState] = await Promise.all([
     getPlayer(proposal.fromPlayerId),
     getPlayer(proposal.toPlayerId),
+    getGameState(),
   ]);
 
   if (!fromPlayer || !toPlayer) {
@@ -393,22 +413,45 @@ export async function respondToProposal(
   const toWins = checkWin(newToScoops);
   const now = Date.now();
 
+  const updatedFromPlayer: Player = {
+    ...fromPlayer,
+    scoops: newFromScoops,
+    hasWon: fromPlayer.hasWon || fromWins,
+    wonAt: fromWins && !fromPlayer.hasWon ? now : fromPlayer.wonAt,
+    lockedUntil: null,
+  };
+  const updatedToPlayer: Player = {
+    ...toPlayer,
+    scoops: newToScoops,
+    hasWon: toPlayer.hasWon || toWins,
+    wonAt: toWins && !toPlayer.hasWon ? now : toPlayer.wonAt,
+    lockedUntil: null,
+  };
+
+  const allPlayers = await getAllPlayers();
+  const remainingPlayers = allPlayers.filter(
+    (player) => player.id !== fromPlayer.id && player.id !== toPlayer.id
+  );
+  const winnerCount = [updatedFromPlayer, updatedToPlayer, ...remainingPlayers].filter(
+    (player) => player.hasWon
+  ).length;
+
+  const nextGameState: GameState | null =
+    winnerCount >= WINNERS_TO_END_GAME
+      ? {
+          status: "ended",
+          startedAt: gameState.startedAt ?? now,
+          endedAt: now,
+        }
+      : null;
+
   await Promise.all([
-    setPlayer({
-      ...fromPlayer,
-      scoops: newFromScoops,
-      hasWon: fromPlayer.hasWon || fromWins,
-      wonAt: fromWins && !fromPlayer.hasWon ? now : fromPlayer.wonAt,
-    }),
-    setPlayer({
-      ...toPlayer,
-      scoops: newToScoops,
-      hasWon: toPlayer.hasWon || toWins,
-      wonAt: toWins && !toPlayer.hasWon ? now : toPlayer.wonAt,
-    }),
+    setPlayer(updatedFromPlayer),
+    setPlayer(updatedToPlayer),
     setProposal({ ...proposal, status: "accepted" }),
     removeProposalForPlayer(respondingPlayerId, proposalId),
+    ...(nextGameState ? [setGameState(nextGameState)] : []),
   ]);
 
-  return { ok: true, accepted: true, newScoops: newToScoops, hasWon: toPlayer.hasWon || toWins };
+  return { ok: true, accepted: true, newScoops: newToScoops, hasWon: updatedToPlayer.hasWon };
 }

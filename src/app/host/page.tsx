@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { MIN_PLAYERS_TO_START } from "@/lib/flavors";
+import { MIN_PLAYERS_TO_START, WINNERS_TO_END_GAME } from "@/lib/flavors";
 
 type GameStatus = "lobby" | "active" | "ended";
 type Summary = {
@@ -21,6 +21,7 @@ export default function HostPage() {
   const [joinUrl, setJoinUrl] = useState("");
   const [qrSize, setQrSize] = useState(220);
   const [starting, setStarting] = useState(false);
+  const [startingNewGame, setStartingNewGame] = useState(false);
   const [resetting, setResetting] = useState(false);
 
   useEffect(() => {
@@ -65,6 +66,15 @@ export default function HostPage() {
       await fetch("/api/host/reset", { method: "POST" });
     } finally {
       setResetting(false);
+    }
+  }
+
+  async function handleNewGame() {
+    setStartingNewGame(true);
+    try {
+      await fetch("/api/host/new-game", { method: "POST" });
+    } finally {
+      setStartingNewGame(false);
     }
   }
 
@@ -174,6 +184,15 @@ export default function HostPage() {
               {playerCount === 1 ? "player" : "players"}
             </p>
           </div>
+          {isEnded && winners.length >= WINNERS_TO_END_GAME && (
+            <button
+              onClick={handleNewGame}
+              disabled={startingNewGame}
+              className="px-[4vw] py-[1.2vh] min-h-[2.8rem] rounded-[min(0.9rem,3vw)] bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-50 font-semibold transition-colors text-[clamp(0.82rem,2.2vw,0.95rem)]"
+            >
+              {startingNewGame ? "Starting…" : "New Game"}
+            </button>
+          )}
           <button
             onClick={handleReset}
             disabled={resetting}

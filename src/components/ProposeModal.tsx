@@ -71,10 +71,12 @@ export function ProposeModal({
     p.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  async function handleSubmit() {
-    if (!selectedPlayer || !offeredFlavor || !requestedFlavor) return;
+  async function handleSubmit(nextRequestedFlavor?: FlavorId) {
+    const activeRequestedFlavor = nextRequestedFlavor ?? requestedFlavor;
+    if (!selectedPlayer || !offeredFlavor || !activeRequestedFlavor) return;
     setSubmitting(true);
     setError("");
+    setRequestedFlavor(activeRequestedFlavor);
 
     try {
       const res = await fetch("/api/propose", {
@@ -84,7 +86,7 @@ export function ProposeModal({
           fromPlayerId: playerId,
           toPlayerId: selectedPlayer.id,
           offeredFlavor,
-          requestedFlavor,
+          requestedFlavor: activeRequestedFlavor,
         }),
       });
       const data = await res.json();
@@ -227,7 +229,7 @@ export function ProposeModal({
           {step === 3 && (
             <div className="flex flex-col gap-3 pt-2">
               <p className="text-[clamp(0.82rem,3.2vw,0.92rem)] text-gray-500 text-center leading-snug">
-                Giving up <strong>{offeredFlavor ? FLAVORS[offeredFlavor].label : ""}</strong> — what do you want?
+                Giving up <strong>{offeredFlavor ? FLAVORS[offeredFlavor].label : ""}</strong> — tap the flavour you want back.
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                 {FLAVOR_IDS.map((fid) => {
@@ -236,12 +238,17 @@ export function ProposeModal({
                   return (
                     <button
                       key={fid}
-                      onClick={() => setRequestedFlavor(fid)}
+                      onClick={() => {
+                        if (!submitting) {
+                          void handleSubmit(fid);
+                        }
+                      }}
+                      disabled={submitting}
                       className={`flex flex-col items-center justify-center gap-2 px-[2.4vw] py-[1.5vh] min-h-[7rem] rounded-[min(1rem,4vw)] border-2 text-center transition-colors ${
                         selected
                           ? "border-amber-400 bg-amber-50"
                           : "border-gray-100 hover:border-amber-200 hover:bg-amber-50"
-                      }`}
+                      } ${submitting ? "opacity-60 cursor-wait" : ""}`}
                     >
                       <FlavorSwatch flavor={fid} size="clamp(2rem, 6vw, 2.7rem)" className="flex-shrink-0" />
                       <span className="text-[clamp(0.8rem,3vw,0.92rem)] font-semibold text-gray-700 leading-tight">{label}</span>
@@ -251,14 +258,11 @@ export function ProposeModal({
               </div>
 
               {error && <p className="text-red-500 text-[clamp(0.8rem,3.2vw,0.9rem)] text-center">{error}</p>}
-
-              <button
-                onClick={handleSubmit}
-                disabled={!requestedFlavor || submitting}
-                className="w-full min-h-[3.25rem] py-[1.7vh] rounded-[min(1rem,4vw)] bg-amber-500 hover:bg-amber-600 active:bg-amber-700 disabled:bg-amber-200 disabled:cursor-not-allowed text-white font-bold text-[clamp(0.98rem,4vw,1.1rem)] transition-colors mt-[1vh]"
-              >
-                {submitting ? "Sending…" : "Send Proposal"}
-              </button>
+              {submitting && (
+                <p className="text-[clamp(0.86rem,3.2vw,0.96rem)] text-amber-700 text-center font-semibold mt-[1vh]">
+                  Sending proposal…
+                </p>
+              )}
             </div>
           )}
         </div>

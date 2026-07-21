@@ -13,6 +13,7 @@ export const FLAVORS: Record<FlavorId, FlavorConfig> = {
 
 export const FLAVOR_IDS = Object.keys(FLAVORS) as FlavorId[];
 export const MIN_PLAYERS_TO_START = 3;
+export const WINNERS_TO_END_GAME = 3;
 
 export function randomFlavor(): FlavorId {
   return FLAVOR_IDS[Math.floor(Math.random() * FLAVOR_IDS.length)];
