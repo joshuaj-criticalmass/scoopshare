@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { MIN_PLAYERS_TO_START, WINNERS_TO_END_GAME } from "@/lib/flavors";
+import type { GameResult } from "@/lib/types";
 
 type GameStatus = "lobby" | "active" | "ended";
 type Summary = {
@@ -9,6 +10,7 @@ type Summary = {
   playerCount: number;
   joinedPlayers: { id: string; name: string; hasWon: boolean }[];
   winners: { name: string; wonAt: number | null }[];
+  resultsHistory: GameResult[];
 };
 
 export default function HostPage() {
@@ -17,12 +19,14 @@ export default function HostPage() {
     playerCount: 0,
     joinedPlayers: [],
     winners: [],
+    resultsHistory: [],
   });
   const [joinUrl, setJoinUrl] = useState("");
   const [qrSize, setQrSize] = useState(220);
   const [starting, setStarting] = useState(false);
   const [startingNewGame, setStartingNewGame] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [resettingResults, setResettingResults] = useState(false);
 
   useEffect(() => {
     setJoinUrl(window.location.origin);
@@ -60,7 +64,7 @@ export default function HostPage() {
   }
 
   async function handleReset() {
-    if (!confirm("Reset the game? This removes all players and scores.")) return;
+    if (!confirm("Reset the current game? This clears the current players and round, but keeps the running results.")) return;
     setResetting(true);
     try {
       await fetch("/api/host/reset", { method: "POST" });
@@ -78,8 +82,85 @@ export default function HostPage() {
     }
   }
 
-  const { status, playerCount, joinedPlayers, winners } = summary;
+  async function handleResetResults() {
+    if (!confirm("Reset the running results list for all completed games?")) return;
+    setResettingResults(true);
+    try {
+      await fetch("/api/host/reset-results", { method: "POST" });
+    } finally {
+      setResettingResults(false);
+    }
+  }
+
+  const { status, playerCount, joinedPlayers, winners, resultsHistory } = summary;
   const displayUrl = joinUrl.replace(/^https?:\/\//, "");
+
+  const resultsHistorySection = (
+    <section className="bg-white/70 rounded-[min(1.4rem,3vw)] px-[4vw] py-[2vh] shadow-sm mt-[2vh]">
+      <div className="flex flex-wrap items-baseline justify-between gap-3 mb-[1.6vh]">
+        <div className="flex flex-wrap items-baseline gap-3">
+          <h2 className="font-pacifico text-[clamp(1.5rem,4vw,2.4rem)] text-amber-600 leading-tight">
+            📋 Running Results
+          </h2>
+          <span className="text-[clamp(0.95rem,2.6vw,1.25rem)] font-bold text-gray-400">
+            {resultsHistory.length} {resultsHistory.length === 1 ? "game" : "games"}
+          </span>
+        </div>
+      </div>
+
+      {resultsHistory.length === 0 ? (
+        <p className="text-gray-400 text-[clamp(0.95rem,2.8vw,1.05rem)]">
+          Completed game results will stack here.
+        </p>
+      ) : (
+        <div className="flex flex-col gap-[1.5vh]">
+          {resultsHistory
+            .slice()
+            .reverse()
+            .map((result) => (
+              <div
+                key={result.gameNumber}
+                className="rounded-[min(1.1rem,3vw)] border border-amber-100 bg-white px-[4vw] py-[1.8vh]"
+              >
+                <div className="flex flex-wrap items-baseline justify-between gap-2 mb-[1vh]">
+                  <p className="font-black text-[clamp(1rem,2.8vw,1.2rem)] text-gray-800">
+                    Game {result.gameNumber}
+                  </p>
+                  <p className="text-gray-400 font-semibold text-[clamp(0.75rem,2vw,0.9rem)]">
+                    {new Date(result.completedAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                    })}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-[0.7vh]">
+                  {result.winners.map((winner) => (
+                    <p
+                      key={`${result.gameNumber}-${winner.playerId}-${winner.place}`}
+                      className="text-[clamp(0.92rem,2.5vw,1rem)] text-gray-700"
+                    >
+                      <span className="font-black text-amber-600">#{winner.place}</span>{" "}
+                      <span className="font-semibold">{winner.name}</span>
+                    </p>
+                  ))}
+                </div>
+              </div>
+            ))}
+        </div>
+      )}
+
+      <div className="mt-[1.8vh] flex justify-end">
+        <button
+          onClick={handleResetResults}
+          disabled={resettingResults}
+          className="px-[4vw] py-[1.2vh] min-h-[2.8rem] rounded-[min(0.9rem,3vw)] border-2 border-red-300 text-red-500 hover:bg-red-50 disabled:opacity-50 font-semibold transition-colors text-[clamp(0.82rem,2.2vw,0.95rem)]"
+        >
+          {resettingResults ? "Resetting…" : "Reset Results"}
+        </button>
+      </div>
+    </section>
+  );
 
   // ── Pre-game (lobby) ───────────────────────────────────────────────────────
   if (status === "lobby") {
@@ -156,6 +237,8 @@ export default function HostPage() {
               ? `Need ${MIN_PLAYERS_TO_START} players to start`
               : `Start Game — ${playerCount} ${playerCount === 1 ? "player" : "players"}`}
           </button>
+
+          {resultsHistorySection}
         </div>
       </main>
     );
@@ -205,35 +288,39 @@ export default function HostPage() {
 
       {/* Players and winners */}
       <div className="flex-1 grid grid-cols-1 xl:grid-cols-[minmax(18rem,0.8fr)_minmax(34rem,1.2fr)] gap-[2vh] items-start">
-        <section className="bg-white/70 rounded-[min(1.4rem,3vw)] px-[4vw] py-[2vh] shadow-sm xl:sticky xl:top-[3vh]">
-          <div className="flex flex-wrap items-baseline gap-3 mb-[1.6vh]">
-            <h2 className="font-pacifico text-[clamp(1.5rem,4vw,2.4rem)] text-amber-600 leading-tight">
-              👥 Joined Players
-            </h2>
-            <span className="text-[clamp(0.95rem,2.6vw,1.25rem)] font-bold text-gray-400">
-              {joinedPlayers.length}
-            </span>
-          </div>
-
-          {joinedPlayers.length === 0 ? (
-            <p className="text-gray-400 text-[clamp(1rem,3vw,1.25rem)]">No players joined.</p>
-          ) : (
-            <div className="flex flex-wrap gap-[1vh]">
-              {joinedPlayers.map((player) => (
-                <span
-                  key={player.id}
-                  className={`px-[3vw] py-[0.8vh] rounded-full text-[clamp(0.82rem,2.2vw,1rem)] font-semibold ${
-                    player.hasWon
-                      ? "bg-amber-200 text-amber-900"
-                      : "bg-white text-gray-700"
-                  }`}
-                >
-                  {player.name}{player.hasWon ? " 🏆" : ""}
-                </span>
-              ))}
+        <div className="flex flex-col gap-[2vh] xl:sticky xl:top-[3vh]">
+          <section className="bg-white/70 rounded-[min(1.4rem,3vw)] px-[4vw] py-[2vh] shadow-sm">
+            <div className="flex flex-wrap items-baseline gap-3 mb-[1.6vh]">
+              <h2 className="font-pacifico text-[clamp(1.5rem,4vw,2.4rem)] text-amber-600 leading-tight">
+                👥 Joined Players
+              </h2>
+              <span className="text-[clamp(0.95rem,2.6vw,1.25rem)] font-bold text-gray-400">
+                {joinedPlayers.length}
+              </span>
             </div>
-          )}
-        </section>
+
+            {joinedPlayers.length === 0 ? (
+              <p className="text-gray-400 text-[clamp(1rem,3vw,1.25rem)]">No players joined.</p>
+            ) : (
+              <div className="flex flex-wrap gap-[1vh]">
+                {joinedPlayers.map((player) => (
+                  <span
+                    key={player.id}
+                    className={`px-[3vw] py-[0.8vh] rounded-full text-[clamp(0.82rem,2.2vw,1rem)] font-semibold ${
+                      player.hasWon
+                        ? "bg-amber-200 text-amber-900"
+                        : "bg-white text-gray-700"
+                    }`}
+                  >
+                    {player.name}{player.hasWon ? " 🏆" : ""}
+                  </span>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {resultsHistorySection}
+        </div>
 
         <section className="min-w-0">
         <div className="flex flex-wrap items-baseline gap-3 mb-[2vh]">

@@ -5,7 +5,7 @@
 
 import { redis } from "./redis";
 import { dealOpeningHands, MIN_PLAYERS_TO_START, WINNERS_TO_END_GAME } from "./flavors";
-import type { Player, SwapProposal, GameState, FlavorId } from "./types";
+import type { Player, SwapProposal, GameState, FlavorId, GameResult } from "./types";
 
 // ---------------------------------------------------------------------------
 // Key helpers
@@ -15,6 +15,7 @@ const KEY = {
   player: (id: string) => `player:${id}`,
   proposal: (id: string) => `proposal:${id}`,
   gameState: "game:state",
+  resultsHistory: "game:resultsHistory",
   playerIndex: "game:playerIndex",
   playerProposals: (playerId: string) => `game:proposalsByPlayer:${playerId}`,
 } as const;
@@ -38,6 +39,21 @@ export async function getGameState(): Promise<GameState> {
 
 export async function setGameState(state: GameState): Promise<void> {
   await redis.set(KEY.gameState, state);
+}
+
+export async function getResultsHistory(): Promise<GameResult[]> {
+  const raw = await redis.get<GameResult[]>(KEY.resultsHistory);
+  return Array.isArray(raw) ? raw : [];
+}
+
+export async function resetResultsHistory(): Promise<void> {
+  await redis.del(KEY.resultsHistory);
+}
+
+async function appendResultsHistory(result: GameResult): Promise<void> {
+  const history = await getResultsHistory();
+  history.push(result);
+  await redis.set(KEY.resultsHistory, history);
 }
 
 // ---------------------------------------------------------------------------
@@ -284,6 +300,20 @@ export function checkWin(scoops: [FlavorId, FlavorId, FlavorId]): boolean {
   return scoops[0] === scoops[1] && scoops[1] === scoops[2];
 }
 
+function sortWinners(players: Player[]): Player[] {
+  return players
+    .filter((player) => player.hasWon)
+    .sort((a, b) => {
+      if (a.wonAt !== b.wonAt) {
+        return (a.wonAt ?? 0) - (b.wonAt ?? 0);
+      }
+      if (a.joinedAt !== b.joinedAt) {
+        return a.joinedAt - b.joinedAt;
+      }
+      return a.id.localeCompare(b.id);
+    });
+}
+
 // ---------------------------------------------------------------------------
 // Propose a swap
 // ---------------------------------------------------------------------------
@@ -384,6 +414,14 @@ export async function respondToProposal(
     getGameState(),
   ]);
 
+  if (gameState.status !== "active") {
+    await Promise.all([
+      setProposal({ ...proposal, status: "expired" }),
+      removeProposalForPlayer(respondingPlayerId, proposalId),
+    ]);
+    return { ok: false, code: "stale" };
+  }
+
   if (!fromPlayer || !toPlayer) {
     await Promise.all([
       setProposal({ ...proposal, status: "expired" }),
@@ -412,6 +450,7 @@ export async function respondToProposal(
   const fromWins = checkWin(newFromScoops);
   const toWins = checkWin(newToScoops);
   const now = Date.now();
+  const bothPlayersNewlyWin = fromWins && toWins && !fromPlayer.hasWon && !toPlayer.hasWon;
 
   const updatedFromPlayer: Player = {
     ...fromPlayer,
@@ -424,7 +463,7 @@ export async function respondToProposal(
     ...toPlayer,
     scoops: newToScoops,
     hasWon: toPlayer.hasWon || toWins,
-    wonAt: toWins && !toPlayer.hasWon ? now : toPlayer.wonAt,
+    wonAt: toWins && !toPlayer.hasWon ? (bothPlayersNewlyWin ? now + 1 : now) : toPlayer.wonAt,
     lockedUntil: null,
   };
 
@@ -445,12 +484,28 @@ export async function respondToProposal(
         }
       : null;
 
+  const completedResults: GameResult | null = nextGameState
+    ? {
+        gameNumber: (await getResultsHistory()).length + 1,
+        completedAt: now,
+        winners: sortWinners([updatedFromPlayer, updatedToPlayer, ...remainingPlayers]).map(
+          (player, index) => ({
+            place: index + 1,
+            playerId: player.id,
+            name: player.name,
+            wonAt: player.wonAt,
+          })
+        ),
+      }
+    : null;
+
   await Promise.all([
     setPlayer(updatedFromPlayer),
     setPlayer(updatedToPlayer),
     setProposal({ ...proposal, status: "accepted" }),
     removeProposalForPlayer(respondingPlayerId, proposalId),
     ...(nextGameState ? [setGameState(nextGameState)] : []),
+    ...(completedResults ? [appendResultsHistory(completedResults)] : []),
   ]);
 
   return { ok: true, accepted: true, newScoops: newToScoops, hasWon: updatedToPlayer.hasWon };

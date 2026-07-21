@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
-import { getGameState, getAllPlayers } from "@/lib/kv";
+import { getGameState, getAllPlayers, getResultsHistory } from "@/lib/kv";
 
 export async function GET() {
   try {
-    const [gameState, players] = await Promise.all([getGameState(), getAllPlayers()]);
+    const [gameState, players, resultsHistory] = await Promise.all([
+      getGameState(),
+      getAllPlayers(),
+      getResultsHistory(),
+    ]);
 
     const joinedPlayers = players
       .slice()
@@ -20,6 +24,7 @@ export async function GET() {
       playerCount: players.length,
       joinedPlayers,
       winners,
+      resultsHistory,
     });
   } catch (err) {
     console.error("[/api/host/summary]", err);

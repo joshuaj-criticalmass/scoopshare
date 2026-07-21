@@ -44,3 +44,16 @@ export type GameState = {
   startedAt: number | null;
   endedAt: number | null;
 };
+
+export type GameResultEntry = {
+  place: number;
+  playerId: string;
+  name: string;
+  wonAt: number | null;
+};
+
+export type GameResult = {
+  gameNumber: number;
+  completedAt: number;
+  winners: GameResultEntry[];
+};
