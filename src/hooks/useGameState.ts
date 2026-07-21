@@ -9,6 +9,7 @@ export type PlayerState = {
   scoops: [FlavorId, FlavorId, FlavorId];
   hasWon: boolean;
   wonAt: number | null;
+  winPlace: number | null;
   lockedUntil: number | null;
 };
 

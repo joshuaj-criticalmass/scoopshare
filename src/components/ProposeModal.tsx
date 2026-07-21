@@ -38,6 +38,7 @@ export function ProposeModal({
   const searchRef = useRef<HTMLInputElement>(null);
 
   const stepSequence = initialOfferedFlavor ? [1, 3] as const : [1, 2, 3] as const;
+  const tappedFlavorLabel = initialOfferedFlavor ? FLAVORS[initialOfferedFlavor].label : null;
 
   useEffect(() => {
     fetch("/api/players")
@@ -124,7 +125,7 @@ export function ProposeModal({
               </button>
             )}
             <h2 className="font-pacifico text-[clamp(1rem,4vw,1.25rem)] text-amber-600">
-              {step === 1 && "Trade with…"}
+              {step === 1 && (tappedFlavorLabel ? `Trade ${tappedFlavorLabel} with…` : "Trade with…")}
               {step === 2 && "You're offering…"}
               {step === 3 && "You want back…"}
             </h2>

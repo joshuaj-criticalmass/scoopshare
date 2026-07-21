@@ -20,7 +20,19 @@ export default function PlayPage() {
   const [countdownSec, setCountdownSec] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showCherryDrop, setShowCherryDrop] = useState(false);
+  const [showWinModal, setShowWinModal] = useState(false);
   const hasWonRef = useRef(false);
+
+  function ordinal(place: number | null) {
+    if (!place) return "";
+    const mod100 = place % 100;
+    if (mod100 >= 11 && mod100 <= 13) return `${place}th`;
+    const mod10 = place % 10;
+    if (mod10 === 1) return `${place}st`;
+    if (mod10 === 2) return `${place}nd`;
+    if (mod10 === 3) return `${place}rd`;
+    return `${place}th`;
+  }
 
   useEffect(() => {
     const pid = localStorage.getItem("ss_pid");
@@ -56,8 +68,19 @@ export default function PlayPage() {
       hasWonRef.current = true;
       setShowConfetti(true);
       setShowCherryDrop(true);
+      setShowWinModal(false);
+      setShowProposeModal(false);
+      setSelectedOfferedFlavor(null);
+      const modalTimer = setTimeout(() => setShowWinModal(true), 60);
       const t = setTimeout(() => setShowConfetti(false), 4500);
-      return () => clearTimeout(t);
+      return () => {
+        clearTimeout(modalTimer);
+        clearTimeout(t);
+      };
+    }
+
+    if (currentHasWon) {
+      setShowWinModal(true);
     }
   }, [currentHasWon]);
 
@@ -89,6 +112,8 @@ export default function PlayPage() {
   const { gameStatus, player, pendingProposals } = gameState;
 
   async function handleRespond(proposalId: string, accept: boolean) {
+    if (player.hasWon) return;
+
     setRespondingTo(proposalId);
     setDismissedProposals((prev) => new Set(Array.from(prev).concat(proposalId)));
     try {
@@ -156,21 +181,16 @@ export default function PlayPage() {
   // ── Active ─────────────────────────────────────────────────────────────────
   if (gameStatus === "active") {
     const isLocked = countdownSec > 0;
-    const visibleProposals = pendingProposals.filter(
+    const canTrade = !player.hasWon;
+    const visibleProposals = canTrade
+      ? pendingProposals.filter(
       (p) => !dismissedProposals.has(p.id)
-    );
+        )
+      : [];
     const SCOOP_POSITIONS = ["Top", "Middle", "Bottom"] as const;
 
     return (
       <main className="min-h-[100dvh] flex flex-col items-center px-[4vw] py-[3vh] gap-[2.2vh] overflow-x-hidden">
-
-        {/* ── Win banner ── */}
-        {player.hasWon && (
-          <div className="w-[92vw] max-w-[25rem] bg-amber-400 text-white rounded-[min(1.25rem,4vw)] px-[4vw] py-[1.8vh] text-center shadow">
-            <p className="font-pacifico text-[clamp(1.5rem,6vw,2rem)] leading-none">You did it! 🍦</p>
-            <p className="text-[clamp(0.85rem,3.4vw,0.95rem)] opacity-90 mt-[0.6vh]">All 3 scoops match — you won!</p>
-          </div>
-        )}
 
         {/* ── Incoming proposals ── */}
         {visibleProposals.length > 0 && (
@@ -225,10 +245,30 @@ export default function PlayPage() {
           <p className="text-[clamp(0.7rem,2.8vw,0.8rem)] font-bold text-gray-400 uppercase tracking-wider">
             {playerName}&apos;s Cone
           </p>
-          <p className="text-[clamp(0.76rem,3vw,0.88rem)] text-gray-500 text-center max-w-[82vw]">
-            Tap a scoop to trade that flavor faster, or use the button below for the full flow.
-          </p>
-          <div className="relative flex items-start justify-center pt-[5.5vh]">
+          {player.hasWon ? (
+            <p className="text-[clamp(0.86rem,3.3vw,0.98rem)] text-gray-600 text-center max-w-[82vw] font-medium">
+              All 3 scoops match.
+            </p>
+          ) : (
+            <p className="text-[clamp(0.86rem,3.3vw,0.98rem)] text-gray-600 text-center max-w-[82vw] font-medium">
+              Tap a scoop to propose a swap.
+            </p>
+          )}
+          <div className="relative flex items-start justify-center pt-[9.5vh]">
+            {player.hasWon && (
+              <div
+                className={`absolute left-1/2 top-0 z-20 w-[78vw] max-w-[19rem] -translate-x-1/2 rounded-[min(1.2rem,4vw)] border border-white/60 bg-white/82 px-[4vw] py-[1.5vh] text-center shadow-xl backdrop-blur-sm transition-all duration-500 ${
+                  showWinModal ? "opacity-100 translate-y-0 scale-100" : "opacity-0 -translate-y-2 scale-95"
+                }`}
+              >
+                <p className="font-pacifico text-[clamp(1.15rem,4.8vw,1.55rem)] leading-none text-amber-600">
+                  You won {ordinal(player.winPlace)} place!
+                </p>
+                <p className="mt-[0.5vh] text-[clamp(0.8rem,3.1vw,0.92rem)] text-gray-600">
+                  Hang tight while the host resets or starts the next round.
+                </p>
+              </div>
+            )}
             {player.hasWon && (
               <Cherry
                 size="clamp(2rem, 9vw, 2.9rem)"
@@ -240,9 +280,9 @@ export default function PlayPage() {
               scoops={player.scoops}
               size="clamp(7.2rem, 34vw, 10.5rem)"
               onScoopClick={(flavor) => {
-                if (!isLocked) openProposeModal(flavor);
+                if (!isLocked && canTrade) openProposeModal(flavor);
               }}
-              scoopClickable={!isLocked}
+              scoopClickable={!isLocked && canTrade}
             />
           </div>
           <div className="flex flex-col gap-[0.8vh] w-[65vw] max-w-[13rem]">
@@ -261,16 +301,13 @@ export default function PlayPage() {
           </div>
         </div>
 
-        {/* ── Propose button ── */}
-        <div className="w-[92vw] max-w-[25rem]">
-          <button
-            onClick={() => openProposeModal()}
-            disabled={isLocked}
-            className="w-full min-h-[3.5rem] py-[1.8vh] rounded-[min(1.25rem,4vw)] bg-amber-500 hover:bg-amber-600 active:bg-amber-700 disabled:bg-amber-200 disabled:cursor-not-allowed text-white font-bold text-[clamp(1rem,4.2vw,1.35rem)] transition-colors"
-          >
-            {isLocked ? `Try again in ${countdownSec}s` : "🔄 Propose a Swap"}
-          </button>
-        </div>
+        {isLocked && canTrade && (
+          <div className="w-[92vw] max-w-[25rem] bg-amber-50 border border-amber-200 rounded-[min(1rem,4vw)] px-[4vw] py-[1.4vh] text-center">
+            <p className="text-[clamp(0.86rem,3.4vw,0.96rem)] font-semibold text-amber-700">
+              You can propose another swap in {countdownSec}s.
+            </p>
+          </div>
+        )}
 
         {/* ── Flavor legend ── */}
         <div className="bg-white rounded-[min(1.2rem,4vw)] p-[max(0.85rem,1.8vh)] w-[92vw] max-w-[25rem] shadow-sm">
