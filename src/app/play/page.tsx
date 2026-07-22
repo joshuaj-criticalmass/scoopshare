@@ -49,6 +49,11 @@ export default function PlayPage() {
     return ordinal(place);
   }
 
+  function winPlaceText(place: number | null) {
+    const label = placeWord(place);
+    return label ? `You won ${label} place!` : "You won!";
+  }
+
   useEffect(() => {
     const pid = localStorage.getItem("ss_pid");
     if (!pid) {
@@ -244,10 +249,7 @@ export default function PlayPage() {
 
         {/* ── Incoming proposals ── */}
         {visibleProposals.length > 0 && (
-          <section
-            className="fixed left-1/2 z-20 w-[92vw] max-w-[25rem] -translate-x-1/2 flex flex-col gap-[1.3vh]"
-            style={{ top: "max(0.75rem, calc(env(safe-area-inset-top) + 0.5rem))" }}
-          >
+          <section className="fixed left-1/2 top-1/2 z-20 w-[92vw] max-w-[25rem] -translate-x-1/2 -translate-y-1/2 flex flex-col gap-[1.3vh]">
             <p className="text-[clamp(0.7rem,2.8vw,0.8rem)] font-bold brand-text-soft uppercase tracking-wider text-center">
               Incoming Trade{visibleProposals.length > 1 ? "s" : ""}
             </p>
@@ -364,7 +366,7 @@ export default function PlayPage() {
             }`}
           >
             <p className="font-pacifico text-[clamp(1.4rem,5.2vw,2rem)] leading-none brand-heading">
-              You won {placeWord(player.winPlace)} place!
+              {winPlaceText(player.winPlace)}
             </p>
             <p className="mt-[0.8vh] text-[clamp(0.85rem,3.1vw,1rem)] brand-text-muted">
               Hang tight while the host resets or starts the next round.
@@ -411,7 +413,7 @@ export default function PlayPage() {
       </div>
       <h1 className="font-pacifico text-[clamp(1.8rem,7vw,2.6rem)] brand-heading">Game Over!</h1>
       {player.hasWon ? (
-        <p className="text-[clamp(0.95rem,3.8vw,1.1rem)] brand-text-muted">You won {placeWord(player.winPlace)} place! 🏆</p>
+        <p className="text-[clamp(0.95rem,3.8vw,1.1rem)] brand-text-muted">{winPlaceText(player.winPlace)} 🏆</p>
       ) : (
         <p className="text-[clamp(0.95rem,3.8vw,1.1rem)] brand-text-soft">Thanks for playing ScoopShare!</p>
       )}

@@ -111,7 +111,7 @@ export function ProposeModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-[4vw]"
+      className="fixed inset-0 z-50 bg-black/50 flex items-start justify-center p-[4vw] pt-[max(env(safe-area-inset-top),2.5rem)]"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="bg-white rounded-[min(1.5rem,4vw)] w-[92vw] max-w-[26rem] sm:max-w-[34rem] lg:max-w-[42rem] max-h-[88dvh] flex flex-col overflow-hidden shadow-2xl">
