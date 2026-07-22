@@ -85,7 +85,7 @@ export default function JoinPage() {
         <button
           type="submit"
           disabled={isLoading || !name.trim()}
-          className="brand-button-primary w-full py-[2vh] min-h-[3.5rem] rounded-[min(1.25rem,4vw)] disabled:cursor-not-allowed font-bold text-[clamp(1.05rem,4.6vw,1.35rem)] transition-colors"
+          className="brand-button-mint w-full py-[2vh] min-h-[3.5rem] rounded-[min(1.25rem,4vw)] disabled:cursor-not-allowed font-bold text-[clamp(1.05rem,4.6vw,1.35rem)] transition-colors"
         >
           {isLoading ? "Joining..." : "Join the Fun!"}
         </button>

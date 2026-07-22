@@ -219,6 +219,25 @@ body {
     color: rgba(107, 62, 38, 0.6);
   }
 
+  .brand-button-mint {
+    background: var(--color-mint);
+    color: var(--color-cocoa);
+  }
+
+  .brand-button-mint:hover {
+    background: var(--color-blush);
+  }
+
+  .brand-button-mint:active {
+    background: var(--color-cocoa);
+    color: var(--color-cream);
+  }
+
+  .brand-button-mint:disabled {
+    background: rgba(194, 242, 208, 0.5);
+    color: rgba(107, 62, 38, 0.6);
+  }
+
   .brand-button-secondary {
     border-color: var(--color-cocoa);
     color: var(--color-cocoa);
