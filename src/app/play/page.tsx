@@ -270,43 +270,73 @@ export default function PlayPage() {
           </section>
         )}
 
-        {/* ── Cone + scoop labels ── */}
-        <div className="flex flex-col items-center gap-[1.2vh] w-full">
-          <p className="font-pacifico text-[clamp(1.35rem,5vw,1.9rem)] brand-heading leading-none text-center">
-            {playerName}&apos;s Cone
-          </p>
-          {player.hasWon ? (
-            <p className="text-[clamp(0.86rem,3.3vw,0.98rem)] brand-text-muted text-center max-w-[82vw] font-medium">
-              All 3 scoops match.
+        <div className="relative w-[92vw] max-w-[25rem]">
+          <div className="absolute inset-0 rounded-[min(1.5rem,4vw)] bg-white/50" />
+
+          {/* ── Cone + scoop labels ── */}
+          <div className="relative flex flex-col items-center gap-[1.2vh] w-full px-[4vw] py-[2vh]">
+            <p className="font-pacifico text-[clamp(1.35rem,5vw,1.9rem)] brand-heading leading-none text-center">
+              {playerName}&apos;s Cone
             </p>
-          ) : (
-            <p className="text-[clamp(0.86rem,3.3vw,0.98rem)] brand-text-muted text-center max-w-[82vw] font-medium">
-              Tap a scoop to propose a swap.
-            </p>
-          )}
-          <div className="relative flex items-start justify-center pt-[5.5vh]">
-            {player.hasWon && (
-              <Cherry
-                size="clamp(2rem, 9vw, 2.9rem)"
-                animationMode={cherryAnimationMode}
-                className="absolute left-1/2 top-0 z-10 -translate-x-1/2 drop-shadow-md"
-              />
+            {player.hasWon ? (
+              <p className="text-[clamp(0.86rem,3.3vw,0.98rem)] brand-text-muted text-center max-w-[82vw] font-medium">
+                All 3 scoops match.
+              </p>
+            ) : (
+              <p className="text-[clamp(0.86rem,3.3vw,0.98rem)] brand-text-muted text-center max-w-[82vw] font-medium">
+                Tap a scoop to propose a swap.
+              </p>
             )}
-            <IceCreamCone
-              scoops={player.scoops}
-              size="clamp(7.2rem, 34vw, 10.5rem)"
-              animationMode={player.hasWon && showWinLoopAnimation ? "loop" : "off"}
-              onScoopClick={(flavor) => {
-                if (!isLocked && canTrade) openProposeModal(flavor);
-              }}
-              scoopClickable={!isLocked && canTrade}
-            />
+            <div className="relative flex items-start justify-center pt-[5.5vh]">
+              {player.hasWon && (
+                <Cherry
+                  size="clamp(2rem, 9vw, 2.9rem)"
+                  animationMode={cherryAnimationMode}
+                  className="absolute left-1/2 top-0 z-10 -translate-x-1/2 drop-shadow-md"
+                />
+              )}
+              <IceCreamCone
+                scoops={player.scoops}
+                size="clamp(7.2rem, 34vw, 10.5rem)"
+                animationMode={player.hasWon && showWinLoopAnimation ? "loop" : "off"}
+                onScoopClick={(flavor) => {
+                  if (!isLocked && canTrade) openProposeModal(flavor);
+                }}
+                scoopClickable={!isLocked && canTrade}
+              />
+            </div>
+
+            {isLocked && canTrade && (
+              <div className="brand-soft-surface w-full rounded-[min(1rem,4vw)] px-[4vw] py-[1.4vh] text-center border">
+                <p className="text-[clamp(0.86rem,3.4vw,0.96rem)] font-semibold">
+                  You can propose another swap in {countdownSec}s.
+                </p>
+              </div>
+            )}
+
+            {/* ── Flavor legend ── */}
+            <div className="bg-white/84 rounded-[min(1.2rem,4vw)] p-[max(0.85rem,1.8vh)] w-full shadow-sm backdrop-blur-sm">
+              <p className="text-[clamp(0.7rem,2.8vw,0.8rem)] font-bold brand-text-soft uppercase tracking-wider mb-[1vh] text-center">
+                Flavour Guide
+              </p>
+              <div className="grid grid-cols-2 gap-[1vh]">
+                {FLAVOR_IDS.map((fid) => {
+                  const { label } = FLAVORS[fid];
+                  return (
+                    <div key={fid} className="flex items-center gap-2">
+                      <FlavorSwatch flavor={fid} size="clamp(1.5rem, 8vw, 2rem)" className="flex-shrink-0" />
+                      <span className="text-[clamp(0.84rem,3.3vw,0.94rem)] brand-text-muted">{label}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
 
         {player.hasWon && (
           <div
-            className={`fixed left-1/2 top-1/2 z-30 w-[82vw] max-w-[23rem] -translate-x-1/2 -translate-y-1/2 rounded-[min(1.3rem,4vw)] border border-white/60 bg-white/84 px-[5vw] py-[2vh] text-center shadow-2xl backdrop-blur-md transition-all duration-500 pointer-events-none ${
+            className={`fixed left-1/2 top-1/2 z-30 w-[82vw] max-w-[23rem] -translate-x-1/2 -translate-y-1/2 rounded-[min(1.3rem,4vw)] border border-white/60 bg-white/50 px-[5vw] py-[2vh] text-center shadow-2xl backdrop-blur-md transition-all duration-500 pointer-events-none ${
               showWinModal ? "opacity-100 scale-100" : "opacity-0 scale-95"
             }`}
           >
@@ -318,32 +348,6 @@ export default function PlayPage() {
             </p>
           </div>
         )}
-
-        {isLocked && canTrade && (
-          <div className="brand-soft-surface w-[92vw] max-w-[25rem] rounded-[min(1rem,4vw)] px-[4vw] py-[1.4vh] text-center border">
-            <p className="text-[clamp(0.86rem,3.4vw,0.96rem)] font-semibold">
-              You can propose another swap in {countdownSec}s.
-            </p>
-          </div>
-        )}
-
-        {/* ── Flavor legend ── */}
-        <div className="bg-white/84 rounded-[min(1.2rem,4vw)] p-[max(0.85rem,1.8vh)] w-[92vw] max-w-[25rem] shadow-sm backdrop-blur-sm">
-          <p className="text-[clamp(0.7rem,2.8vw,0.8rem)] font-bold brand-text-soft uppercase tracking-wider mb-[1vh] text-center">
-            Flavour Guide
-          </p>
-          <div className="grid grid-cols-2 gap-[1vh]">
-            {FLAVOR_IDS.map((fid) => {
-              const { label } = FLAVORS[fid];
-              return (
-                <div key={fid} className="flex items-center gap-2">
-                  <FlavorSwatch flavor={fid} size="clamp(1.5rem, 8vw, 2rem)" className="flex-shrink-0" />
-                  <span className="text-[clamp(0.76rem,3vw,0.85rem)] brand-text-muted">{label}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
 
         {/* ── Propose modal ── */}
         {showProposeModal && (
