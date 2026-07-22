@@ -13,37 +13,37 @@
     transform: translate(-50%, -100vh) rotate(-18deg) scale(0.92);
   }
   72% {
-    transform: translate(-50%, 14px) rotate(6deg) scale(1.02);
+    transform: translate(-50%, 34px) rotate(6deg) scale(1.02);
   }
   86% {
-    transform: translate(-50%, -6px) rotate(-4deg) scale(0.99);
+    transform: translate(-50%, 14px) rotate(-4deg) scale(0.99);
   }
   100% {
-    transform: translate(-50%, 0) rotate(0deg) scale(1);
+    transform: translate(-50%, 20px) rotate(0deg) scale(1);
   }
 }
 
 @keyframes cherry-win-loop {
   0% {
-    transform: translate(-50%, 0) scale(1);
+    transform: translate(-50%, 20px) scale(1);
   }
   16% {
-    transform: translate(-50%, -64px) scale(0.97);
+    transform: translate(-50%, -44px) scale(0.97);
   }
   45% {
-    transform: translate(-50%, -64px) scale(0.97);
+    transform: translate(-50%, -44px) scale(0.97);
   }
   57% {
-    transform: translate(-50%, 14px) scale(1.025);
+    transform: translate(-50%, 34px) scale(1.025);
   }
   67% {
-    transform: translate(-50%, -6px) scale(0.992);
+    transform: translate(-50%, 14px) scale(0.992);
   }
   75% {
-    transform: translate(-50%, 0) scale(1);
+    transform: translate(-50%, 20px) scale(1);
   }
   100% {
-    transform: translate(-50%, 0) scale(1);
+    transform: translate(-50%, 20px) scale(1);
   }
 }
 

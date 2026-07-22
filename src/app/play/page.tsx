@@ -372,11 +372,15 @@ export default function PlayPage() {
         {player.hasWon && (
           <Cherry
             size="clamp(2rem, 8vw, 2.6rem)"
-            animationMode="off"
+            animationMode="loop"
             className="absolute left-1/2 top-0 z-10 -translate-x-1/2 drop-shadow-md"
           />
         )}
-        <IceCreamCone scoops={player.scoops} size="clamp(6.6rem, 31vw, 9rem)" />
+        <IceCreamCone
+          scoops={player.scoops}
+          size="clamp(6.6rem, 31vw, 9rem)"
+          animationMode={player.hasWon ? "loop" : "off"}
+        />
       </div>
       <h1 className="font-pacifico text-[clamp(1.8rem,7vw,2.6rem)] text-amber-600">Game Over!</h1>
       {player.hasWon ? (
