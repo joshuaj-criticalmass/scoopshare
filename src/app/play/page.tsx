@@ -271,7 +271,7 @@ export default function PlayPage() {
         )}
 
         <div className="relative w-[92vw] max-w-[25rem]">
-          <div className="absolute inset-0 rounded-[min(1.5rem,4vw)] bg-white/50" />
+          <div className="absolute inset-0 rounded-[min(1.5rem,4vw)] border border-white/70 bg-white/50 shadow-sm backdrop-blur-sm" />
 
           {/* ── Cone + scoop labels ── */}
           <div className="relative flex flex-col items-center gap-[1.2vh] w-full px-[4vw] py-[2vh]">
@@ -336,7 +336,7 @@ export default function PlayPage() {
 
         {player.hasWon && (
           <div
-            className={`fixed left-1/2 top-1/2 z-30 w-[82vw] max-w-[23rem] -translate-x-1/2 -translate-y-1/2 rounded-[min(1.3rem,4vw)] border border-white/60 bg-white/50 px-[5vw] py-[2vh] text-center shadow-2xl backdrop-blur-md transition-all duration-500 pointer-events-none ${
+            className={`fixed left-1/2 top-1/2 z-30 w-[82vw] max-w-[23rem] -translate-x-1/2 -translate-y-1/2 rounded-[min(1.3rem,4vw)] border border-white/70 bg-white/50 px-[5vw] py-[2vh] text-center shadow-2xl backdrop-blur-md transition-all duration-500 pointer-events-none ${
               showWinModal ? "opacity-100 scale-100" : "opacity-0 scale-95"
             }`}
           >
