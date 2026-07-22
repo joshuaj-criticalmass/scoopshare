@@ -3,12 +3,24 @@ import { useId } from "react";
 interface CherryProps {
   size?: number | string;
   className?: string;
-  animateDrop?: boolean;
+  animationMode?: "off" | "drop" | "loop";
 }
 
-export function Cherry({ size = 54, className = "", animateDrop = false }: CherryProps) {
+export function Cherry({ size = 54, className = "", animationMode = "off" }: CherryProps) {
   const rawId = useId();
   const uid = rawId.replace(/:/g, "");
+
+  const animationStyle =
+    animationMode === "drop"
+      ? { animation: "cherry-drop 1200ms cubic-bezier(0.2, 0.9, 0.18, 1) both" }
+      : animationMode === "loop"
+      ? {
+          animationName: "cherry-win-loop",
+          animationDuration: "1.3s",
+          animationTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+          animationIterationCount: "infinite",
+        }
+      : null;
 
   return (
     <svg
@@ -16,16 +28,7 @@ export function Cherry({ size = 54, className = "", animateDrop = false }: Cherr
       viewBox="0 0 112.64 203.67"
       aria-hidden="true"
       className={className}
-      style={
-        animateDrop
-          ? {
-              width: size,
-              height: "auto",
-              overflow: "visible",
-              animation: "cherry-drop 1200ms cubic-bezier(0.2, 0.9, 0.18, 1) both",
-            }
-          : { width: size, height: "auto", overflow: "visible" }
-      }
+      style={{ width: size, height: "auto", overflow: "visible", ...animationStyle }}
     >
       <defs>
         <filter id={`cherry-shadow-${uid}`} x="-35%" y="-25%" width="190%" height="220%">

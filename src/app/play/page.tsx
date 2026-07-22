@@ -9,6 +9,7 @@ import { Confetti } from "@/components/Confetti";
 import { Cherry } from "@/components/Cherry";
 
 const WIN_CHERRY_DELAY_MS = 920;
+const WIN_LOOP_START_DELAY_MS = WIN_CHERRY_DELAY_MS + 1320;
 
 export default function PlayPage() {
   const router = useRouter();
@@ -21,7 +22,8 @@ export default function PlayPage() {
   const [respondingTo, setRespondingTo] = useState<string | null>(null);
   const [countdownSec, setCountdownSec] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [showCherryDrop, setShowCherryDrop] = useState(false);
+  const [cherryAnimationMode, setCherryAnimationMode] = useState<"off" | "drop" | "loop">("off");
+  const [showWinLoopAnimation, setShowWinLoopAnimation] = useState(false);
   const [showWinModal, setShowWinModal] = useState(false);
   const hasWonRef = useRef(false);
 
@@ -69,15 +71,21 @@ export default function PlayPage() {
     if (currentHasWon && !hasWonRef.current) {
       hasWonRef.current = true;
       setShowConfetti(true);
-      setShowCherryDrop(false);
+      setCherryAnimationMode("off");
+      setShowWinLoopAnimation(false);
       setShowWinModal(false);
       setShowProposeModal(false);
       setSelectedOfferedFlavor(null);
-      const cherryTimer = setTimeout(() => setShowCherryDrop(true), WIN_CHERRY_DELAY_MS);
+      const cherryTimer = setTimeout(() => setCherryAnimationMode("drop"), WIN_CHERRY_DELAY_MS);
+      const loopTimer = setTimeout(() => {
+        setShowWinLoopAnimation(true);
+        setCherryAnimationMode("loop");
+      }, WIN_LOOP_START_DELAY_MS);
       const modalTimer = setTimeout(() => setShowWinModal(true), 60);
       const t = setTimeout(() => setShowConfetti(false), 4500);
       return () => {
         clearTimeout(cherryTimer);
+        clearTimeout(loopTimer);
         clearTimeout(modalTimer);
         clearTimeout(t);
       };
@@ -90,7 +98,8 @@ export default function PlayPage() {
 
     hasWonRef.current = false;
     setShowWinModal(false);
-    setShowCherryDrop(false);
+    setCherryAnimationMode("off");
+    setShowWinLoopAnimation(false);
   }, [currentHasWon]);
 
   useEffect(() => {
@@ -279,14 +288,14 @@ export default function PlayPage() {
             {player.hasWon && (
               <Cherry
                 size="clamp(2rem, 9vw, 2.9rem)"
-                animateDrop={showCherryDrop}
+                animationMode={cherryAnimationMode}
                 className="absolute left-1/2 top-0 z-10 -translate-x-1/2 drop-shadow-md"
               />
             )}
             <IceCreamCone
               scoops={player.scoops}
               size="clamp(7.2rem, 34vw, 10.5rem)"
-              animationMode={player.hasWon ? "once" : "off"}
+              animationMode={player.hasWon && showWinLoopAnimation ? "loop" : "off"}
               onScoopClick={(flavor) => {
                 if (!isLocked && canTrade) openProposeModal(flavor);
               }}
@@ -363,6 +372,7 @@ export default function PlayPage() {
         {player.hasWon && (
           <Cherry
             size="clamp(2rem, 8vw, 2.6rem)"
+            animationMode="off"
             className="absolute left-1/2 top-0 z-10 -translate-x-1/2 drop-shadow-md"
           />
         )}

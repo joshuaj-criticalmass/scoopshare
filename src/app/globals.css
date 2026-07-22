@@ -23,6 +23,30 @@
   }
 }
 
+@keyframes cherry-win-loop {
+  0% {
+    transform: translate(-50%, 0) scale(1);
+  }
+  16% {
+    transform: translate(-50%, -64px) scale(0.97);
+  }
+  45% {
+    transform: translate(-50%, -64px) scale(0.97);
+  }
+  57% {
+    transform: translate(-50%, 14px) scale(1.025);
+  }
+  67% {
+    transform: translate(-50%, -6px) scale(0.992);
+  }
+  75% {
+    transform: translate(-50%, 0) scale(1);
+  }
+  100% {
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
 @keyframes ice-cream-cone-rise {
   0% {
     transform: translateY(0) scaleY(1);
