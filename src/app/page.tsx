@@ -11,11 +11,42 @@ export default function JoinPage() {
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    if (localStorage.getItem("ss_pid")) {
-      router.replace("/play");
-    } else {
+    const storedPlayerId = localStorage.getItem("ss_pid");
+    if (!storedPlayerId) {
       setChecking(false);
+      return;
     }
+
+    let cancelled = false;
+
+    const validateStoredPlayer = async () => {
+      try {
+        const res = await fetch(`/api/state?playerId=${encodeURIComponent(storedPlayerId)}`);
+        if (cancelled) return;
+
+        if (res.ok) {
+          router.replace("/play");
+          return;
+        }
+
+        if (res.status === 404) {
+          localStorage.removeItem("ss_pid");
+          localStorage.removeItem("ss_name");
+        }
+      } catch {
+        // If validation fails, stay on the join screen rather than trapping the player in /play.
+      } finally {
+        if (!cancelled) {
+          setChecking(false);
+        }
+      }
+    };
+
+    void validateStoredPlayer();
+
+    return () => {
+      cancelled = true;
+    };
   }, [router]);
 
   async function handleSubmit(e: React.FormEvent) {

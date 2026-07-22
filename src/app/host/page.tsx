@@ -174,15 +174,15 @@ export default function HostPage() {
           <div className="flex w-full flex-col gap-[3vh] xl:flex-row xl:items-start xl:justify-center xl:gap-[2vw]">
           <aside className="w-full xl:max-w-[25rem] xl:flex-shrink-0">
             <div className="rounded-[min(1.5rem,4vw)] border border-white/70 bg-white/80 px-[4vw] py-[2.4vh] shadow-md backdrop-blur-md xl:sticky xl:top-[4vh] xl:h-[calc(100dvh-25vh)] xl:px-[2vw]">
-              <div className="flex h-full flex-col">
+              <div className="flex h-full flex-col items-start">
                 <p className="text-[clamp(0.82rem,1.2vw,0.98rem)] font-bold text-gray-400 uppercase tracking-[0.22em] mb-[1.6vh] text-left">
                   How To Play
                 </p>
-                <ul className="flex h-full flex-1 flex-col justify-around text-[clamp(1rem,1.8vw,1.42rem)] leading-[1.28] brand-text-muted text-left">
-                  <li className="flex-1 flex items-center">Click the QR code and enter your name.</li>
-                  <li className="flex-1 flex items-center">Wait for the host to start the game.</li>
-                  <li className="flex-1 flex items-center">You will get a cone with 3 different scoops of ice cream.</li>
-                  <li className="flex-1 flex items-center">
+                <ul className="flex w-full flex-col text-[clamp(1rem,1.8vw,1.42rem)] leading-[1.28] brand-text-muted text-left">
+                  <li className="py-[15px] border-t border-[rgba(107,62,38,0.16)]">Click the QR code and enter your name.</li>
+                  <li className="py-[15px] border-t border-[rgba(107,62,38,0.16)]">Wait for the host to start the game.</li>
+                  <li className="py-[15px] border-t border-[rgba(107,62,38,0.16)]">You will get a cone with 3 different scoops of ice cream.</li>
+                  <li className="py-[15px] border-t border-[rgba(107,62,38,0.16)]">
                     <div>
                       Trade with other players to make all of your scoops the same flavour.
                       <span className="mt-[0.7vh] block text-[clamp(0.84rem,1.15vw,1rem)] leading-[1.35] brand-text-soft">
@@ -190,7 +190,7 @@ export default function HostPage() {
                       </span>
                     </div>
                   </li>
-                  <li className="flex-1 flex items-center">First, second, and third place are awarded in order.</li>
+                  <li className="py-[15px] border-y border-[rgba(107,62,38,0.16)]">First, second, and third place are awarded in order.</li>
                 </ul>
               </div>
             </div>
