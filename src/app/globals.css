@@ -272,15 +272,15 @@ body {
   }
 
   .brand-rank-1 {
-    color: var(--color-cocoa);
+    color: #d4af37;
   }
 
   .brand-rank-2 {
-    color: rgba(107, 62, 38, 0.62);
+    color: #c0c0c0;
   }
 
   .brand-rank-3 {
-    color: rgba(255, 197, 217, 0.92);
+    color: #cd7f32;
   }
 
   .ice-cream-cone-rise {

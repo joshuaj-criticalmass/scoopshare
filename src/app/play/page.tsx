@@ -27,6 +27,10 @@ export default function PlayPage() {
   const [showWinModal, setShowWinModal] = useState(false);
   const hasWonRef = useRef(false);
 
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   function ordinal(place: number | null) {
     if (!place) return "";
     const mod100 = place % 100;
@@ -36,6 +40,13 @@ export default function PlayPage() {
     if (mod10 === 2) return `${place}nd`;
     if (mod10 === 3) return `${place}rd`;
     return `${place}th`;
+  }
+
+  function placeWord(place: number | null) {
+    if (place === 1) return "first";
+    if (place === 2) return "second";
+    if (place === 3) return "third";
+    return ordinal(place);
   }
 
   useEffect(() => {
@@ -50,6 +61,7 @@ export default function PlayPage() {
   }, [router]);
 
   const gameState = useGameState(playerId);
+  const currentGameStatus = gameState.status === "ok" ? gameState.gameStatus : gameState.status;
 
   // If the player no longer exists (e.g. after a host reset), go back to join
   useEffect(() => {
@@ -70,6 +82,7 @@ export default function PlayPage() {
   useEffect(() => {
     if (currentHasWon && !hasWonRef.current) {
       hasWonRef.current = true;
+      scrollToTop();
       setShowConfetti(true);
       setCherryAnimationMode("off");
       setShowWinLoopAnimation(false);
@@ -104,9 +117,14 @@ export default function PlayPage() {
 
   useEffect(() => {
     if (gameState.status !== "ok" || gameState.gameStatus !== "active") return;
+    scrollToTop();
     setDismissedProposals(new Set());
     setLocalLockedUntil(null);
   }, [gameState]);
+
+  useEffect(() => {
+    scrollToTop();
+  }, [showProposeModal, showWinModal, currentGameStatus]);
 
   useEffect(() => {
     if (effectiveLockedUntil <= Date.now()) {
@@ -142,6 +160,7 @@ export default function PlayPage() {
   async function handleRespond(proposalId: string, accept: boolean) {
     if (player.hasWon) return;
 
+    scrollToTop();
     setRespondingTo(proposalId);
     setDismissedProposals((prev) => new Set(Array.from(prev).concat(proposalId)));
     try {
@@ -163,6 +182,7 @@ export default function PlayPage() {
   }
 
   function openProposeModal(offeredFlavor: (typeof FLAVOR_IDS)[number] | null = null) {
+    scrollToTop();
     setSelectedOfferedFlavor(offeredFlavor);
     setShowProposeModal(true);
   }
@@ -224,7 +244,10 @@ export default function PlayPage() {
 
         {/* ── Incoming proposals ── */}
         {visibleProposals.length > 0 && (
-          <section className="w-[92vw] max-w-[25rem] flex flex-col gap-[1.3vh]">
+          <section
+            className="fixed left-1/2 z-20 w-[92vw] max-w-[25rem] -translate-x-1/2 flex flex-col gap-[1.3vh]"
+            style={{ top: "max(0.75rem, calc(env(safe-area-inset-top) + 0.5rem))" }}
+          >
             <p className="text-[clamp(0.7rem,2.8vw,0.8rem)] font-bold brand-text-soft uppercase tracking-wider text-center">
               Incoming Trade{visibleProposals.length > 1 ? "s" : ""}
             </p>
@@ -341,7 +364,7 @@ export default function PlayPage() {
             }`}
           >
             <p className="font-pacifico text-[clamp(1.4rem,5.2vw,2rem)] leading-none brand-heading">
-              You won {ordinal(player.winPlace)} place!
+              You won {placeWord(player.winPlace)} place!
             </p>
             <p className="mt-[0.8vh] text-[clamp(0.85rem,3.1vw,1rem)] brand-text-muted">
               Hang tight while the host resets or starts the next round.
@@ -388,7 +411,7 @@ export default function PlayPage() {
       </div>
       <h1 className="font-pacifico text-[clamp(1.8rem,7vw,2.6rem)] brand-heading">Game Over!</h1>
       {player.hasWon ? (
-        <p className="text-[clamp(0.95rem,3.8vw,1.1rem)] brand-text-muted">You won — great trading! 🏆</p>
+        <p className="text-[clamp(0.95rem,3.8vw,1.1rem)] brand-text-muted">You won {placeWord(player.winPlace)} place! 🏆</p>
       ) : (
         <p className="text-[clamp(0.95rem,3.8vw,1.1rem)] brand-text-soft">Thanks for playing ScoopShare!</p>
       )}
