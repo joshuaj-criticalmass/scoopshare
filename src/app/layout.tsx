@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Nunito, Pacifico } from "next/font/google";
 import "./globals.css";
+import { ShaderBackground } from "@/components/ShaderBackground";
 
 const nunito = Nunito({
   subsets: ["latin"],
@@ -36,6 +37,8 @@ export default function RootLayout({
       <body
         className={`${nunito.variable} ${pacifico.variable} font-nunito antialiased`}
       >
+        <ShaderBackground />
+        <div aria-hidden="true" className="shader-overlay" />
         {children}
       </body>
     </html>

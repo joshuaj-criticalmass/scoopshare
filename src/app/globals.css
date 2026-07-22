@@ -144,10 +144,24 @@
   :root {
     --font-nunito: "Nunito", sans-serif;
     --font-pacifico: "Pacifico", cursive;
+    --color-cocoa: #6b3e26;
+    --color-blush: #ffc5d9;
+    --color-mint: #c2f2d0;
+    --color-cream: #fdf5c9;
+    --background: var(--color-cream);
+    --foreground: var(--color-cocoa);
+  }
+
+  html {
+    min-height: 100%;
+    background: var(--background);
   }
 
   body {
-    @apply bg-amber-50 text-gray-800;
+    @apply text-gray-800;
+    position: relative;
+    min-height: 100vh;
+    background: transparent;
     font-family: var(--font-nunito);
     -webkit-tap-highlight-color: transparent;
   }
@@ -157,25 +171,118 @@
   }
 }
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--background);
 }
 
 @layer utilities {
+  .shader-background {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    width: 100vw;
+    height: 100vh;
+    background: var(--color-cream);
+    pointer-events: none;
+  }
+
+  .shader-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0);
+    pointer-events: none;
+  }
+
+  .brand-heading {
+    color: var(--color-cocoa);
+  }
+
+  .brand-button-primary {
+    background: var(--color-blush);
+    color: var(--color-cocoa);
+  }
+
+  .brand-button-primary:hover {
+    background: var(--color-mint);
+  }
+
+  .brand-button-primary:active {
+    background: var(--color-cocoa);
+    color: var(--color-cream);
+  }
+
+  .brand-button-primary:disabled {
+    background: rgba(255, 197, 217, 0.5);
+    color: rgba(107, 62, 38, 0.6);
+  }
+
+  .brand-button-secondary {
+    border-color: var(--color-cocoa);
+    color: var(--color-cocoa);
+    background: rgba(253, 245, 201, 0.58);
+  }
+
+  .brand-button-secondary:hover {
+    background: rgba(255, 197, 217, 0.34);
+  }
+
+  .brand-input {
+    border-color: rgba(255, 197, 217, 0.92);
+    color: var(--color-cocoa);
+    background: rgba(255, 255, 255, 0.88);
+  }
+
+  .brand-input::placeholder {
+    color: rgba(107, 62, 38, 0.4);
+  }
+
+  .brand-input:focus {
+    border-color: var(--color-cocoa);
+  }
+
+  .brand-chip {
+    background: rgba(255, 197, 217, 0.82);
+    color: var(--color-cocoa);
+  }
+
+  .brand-chip-mint {
+    background: rgba(194, 242, 208, 0.88);
+    color: var(--color-cocoa);
+  }
+
+  .brand-card-border {
+    border-color: rgba(255, 197, 217, 0.88);
+  }
+
+  .brand-soft-surface {
+    background: rgba(253, 245, 201, 0.72);
+    border-color: rgba(194, 242, 208, 0.95);
+    color: var(--color-cocoa);
+  }
+
+  .brand-text-muted {
+    color: rgba(107, 62, 38, 0.72);
+  }
+
+  .brand-text-soft {
+    color: rgba(107, 62, 38, 0.56);
+  }
+
+  .brand-rank-1 {
+    color: var(--color-cocoa);
+  }
+
+  .brand-rank-2 {
+    color: rgba(107, 62, 38, 0.62);
+  }
+
+  .brand-rank-3 {
+    color: rgba(255, 197, 217, 0.92);
+  }
+
   .ice-cream-cone-rise {
     transform-box: fill-box;
     transform-origin: center bottom;

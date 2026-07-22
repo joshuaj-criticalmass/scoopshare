@@ -96,10 +96,10 @@ export default function HostPage() {
   const displayUrl = joinUrl.replace(/^https?:\/\//, "");
 
   const resultsHistorySection = (
-    <section className="bg-white/70 rounded-[min(1.4rem,3vw)] px-[4vw] py-[2vh] shadow-sm mt-[2vh]">
+    <section className="rounded-[min(1.4rem,3vw)] border border-white/60 bg-white/68 px-[4vw] py-[2vh] shadow-sm backdrop-blur-md mt-[2vh]">
       <div className="flex flex-wrap items-baseline justify-between gap-3 mb-[1.6vh]">
         <div className="flex flex-wrap items-baseline gap-3">
-          <h2 className="font-pacifico text-[clamp(1.5rem,4vw,2.4rem)] text-amber-600 leading-tight">
+          <h2 className="font-pacifico text-[clamp(1.5rem,4vw,2.4rem)] brand-heading leading-tight">
             📋 Running Results
           </h2>
           <span className="text-[clamp(0.95rem,2.6vw,1.25rem)] font-bold text-gray-400">
@@ -120,7 +120,7 @@ export default function HostPage() {
             .map((result) => (
               <div
                 key={result.gameNumber}
-                className="rounded-[min(1.1rem,3vw)] border border-amber-100 bg-white px-[4vw] py-[1.8vh]"
+                className="rounded-[min(1.1rem,3vw)] border border-white/70 bg-white/84 px-[4vw] py-[1.8vh] backdrop-blur-sm"
               >
                 <div className="flex flex-wrap items-baseline justify-between gap-2 mb-[1vh]">
                   <p className="font-black text-[clamp(1rem,2.8vw,1.2rem)] text-gray-800">
@@ -140,7 +140,7 @@ export default function HostPage() {
                       key={`${result.gameNumber}-${winner.playerId}-${winner.place}`}
                       className="text-[clamp(0.92rem,2.5vw,1rem)] text-gray-700"
                     >
-                      <span className="font-black text-amber-600">#{winner.place}</span>{" "}
+                      <span className="font-black brand-heading">#{winner.place}</span>{" "}
                       <span className="font-semibold">{winner.name}</span>
                     </p>
                   ))}
@@ -154,7 +154,7 @@ export default function HostPage() {
         <button
           onClick={handleResetResults}
           disabled={resettingResults}
-          className="px-[4vw] py-[1.2vh] min-h-[2.8rem] rounded-[min(0.9rem,3vw)] border-2 border-red-300 text-red-500 hover:bg-red-50 disabled:opacity-50 font-semibold transition-colors text-[clamp(0.82rem,2.2vw,0.95rem)]"
+          className="brand-button-secondary px-[4vw] py-[1.2vh] min-h-[2.8rem] rounded-[min(0.9rem,3vw)] border-2 disabled:opacity-50 font-semibold transition-colors text-[clamp(0.82rem,2.2vw,0.95rem)]"
         >
           {resettingResults ? "Resetting…" : "Reset Results"}
         </button>
@@ -165,13 +165,13 @@ export default function HostPage() {
   // ── Pre-game (lobby) ───────────────────────────────────────────────────────
   if (status === "lobby") {
     return (
-      <main className="min-h-[100dvh] flex flex-col items-center justify-center gap-[4vh] px-[6vw] py-[4vh] bg-amber-50 overflow-x-hidden">
-        <h1 className="font-pacifico text-[clamp(2.4rem,7vw,4rem)] text-amber-600 text-center leading-none">ScoopShare</h1>
+      <main className="min-h-[100dvh] flex flex-col items-center justify-center gap-[4vh] px-[6vw] py-[4vh] overflow-x-hidden">
+        <h1 className="font-pacifico text-[clamp(2.4rem,7vw,4rem)] brand-heading text-center leading-none">ScoopShare</h1>
 
         <div className="flex flex-col sm:flex-row items-center gap-[4vh] w-full justify-center">
           {/* QR code */}
           {joinUrl && (
-            <div className="bg-white p-[min(1rem,2vh)] rounded-[min(1.5rem,4vw)] shadow-md">
+            <div className="rounded-[min(1.5rem,4vw)] border border-white/70 bg-white/84 p-[min(1rem,2vh)] shadow-md backdrop-blur-md">
               <QRCodeSVG
                 value={joinUrl}
                 size={qrSize}
@@ -192,8 +192,8 @@ export default function HostPage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-[min(1.25rem,4vw)] px-[5vw] py-[2vh] shadow-sm text-center w-full sm:w-auto">
-              <p className="text-[clamp(3rem,12vw,4.5rem)] font-black text-amber-500 leading-none">
+            <div className="rounded-[min(1.25rem,4vw)] border border-white/70 bg-white/78 px-[5vw] py-[2vh] shadow-sm text-center w-full sm:w-auto backdrop-blur-md">
+              <p className="text-[clamp(3rem,12vw,4.5rem)] font-black brand-heading leading-none">
                 {playerCount}
               </p>
               <p className="text-gray-500 font-semibold mt-[0.6vh] text-[clamp(0.9rem,2.6vw,1rem)]">
@@ -204,7 +204,7 @@ export default function HostPage() {
         </div>
 
         <div className="w-[92vw] max-w-[34rem] flex flex-col gap-[1.5vh]">
-          <div className="bg-white rounded-[min(1.25rem,4vw)] px-[4vw] py-[1.8vh] shadow-sm">
+          <div className="rounded-[min(1.25rem,4vw)] border border-white/70 bg-white/78 px-[4vw] py-[1.8vh] shadow-sm backdrop-blur-md">
             <p className="text-[clamp(0.8rem,2vw,0.95rem)] font-bold text-gray-400 uppercase tracking-wider mb-[1vh] text-center">
               Joined Players
             </p>
@@ -217,7 +217,7 @@ export default function HostPage() {
                 {joinedPlayers.map((player) => (
                   <span
                     key={player.id}
-                    className="bg-amber-100 text-amber-800 px-[3vw] py-[0.7vh] rounded-full text-[clamp(0.82rem,2.4vw,0.95rem)] font-semibold"
+                    className="brand-chip px-[3vw] py-[0.7vh] rounded-full text-[clamp(0.82rem,2.4vw,0.95rem)] font-semibold"
                   >
                     {player.name}
                   </span>
@@ -229,7 +229,7 @@ export default function HostPage() {
           <button
             onClick={handleStart}
             disabled={starting || playerCount < MIN_PLAYERS_TO_START}
-            className="w-full px-[6vw] py-[2vh] min-h-[3.75rem] rounded-[min(1.25rem,4vw)] bg-amber-500 hover:bg-amber-600 active:bg-amber-700 disabled:bg-amber-200 disabled:cursor-not-allowed text-white font-black text-[clamp(1.05rem,3.8vw,1.6rem)] transition-colors shadow-lg"
+            className="brand-button-primary w-full px-[6vw] py-[2vh] min-h-[3.75rem] rounded-[min(1.25rem,4vw)] disabled:cursor-not-allowed font-black text-[clamp(1.05rem,3.8vw,1.6rem)] transition-colors shadow-lg"
           >
             {starting
               ? "Starting…"
@@ -248,21 +248,21 @@ export default function HostPage() {
   const isEnded = status === "ended";
 
   return (
-    <main className="min-h-[100dvh] flex flex-col px-[5vw] py-[3vh] bg-amber-50 gap-[2.5vh] overflow-x-hidden">
+    <main className="min-h-[100dvh] flex flex-col px-[5vw] py-[3vh] gap-[2.5vh] overflow-x-hidden">
       {/* Header bar */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-[1.8vh]">
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="font-pacifico text-[clamp(2rem,5vw,3rem)] text-amber-600 leading-none">ScoopShare</h1>
+          <h1 className="font-pacifico text-[clamp(2rem,5vw,3rem)] brand-heading leading-none">ScoopShare</h1>
           {isEnded && (
-            <span className="bg-amber-500 text-white font-bold px-[3vw] py-[0.7vh] rounded-full text-[clamp(0.72rem,2vw,0.9rem)]">
+            <span className="brand-chip-mint font-bold px-[3vw] py-[0.7vh] rounded-full text-[clamp(0.72rem,2vw,0.9rem)]">
               GAME OVER
             </span>
           )}
         </div>
         <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
           {/* Player count */}
-          <div className="bg-white rounded-[min(1.1rem,3vw)] px-[4vw] py-[1.2vh] shadow-sm text-center min-w-[7rem]">
-            <p className="text-[clamp(1.8rem,5vw,2.8rem)] font-black text-amber-500 leading-none">{playerCount}</p>
+          <div className="rounded-[min(1.1rem,3vw)] border border-white/70 bg-white/78 px-[4vw] py-[1.2vh] shadow-sm text-center min-w-[7rem] backdrop-blur-md">
+            <p className="text-[clamp(1.8rem,5vw,2.8rem)] font-black brand-heading leading-none">{playerCount}</p>
             <p className="text-gray-400 font-semibold text-[clamp(0.75rem,2vw,0.9rem)] mt-[0.3vh]">
               {playerCount === 1 ? "player" : "players"}
             </p>
@@ -271,7 +271,7 @@ export default function HostPage() {
             <button
               onClick={handleNewGame}
               disabled={startingNewGame}
-              className="px-[4vw] py-[1.2vh] min-h-[2.8rem] rounded-[min(0.9rem,3vw)] bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-50 font-semibold transition-colors text-[clamp(0.82rem,2.2vw,0.95rem)]"
+              className="brand-button-primary px-[4vw] py-[1.2vh] min-h-[2.8rem] rounded-[min(0.9rem,3vw)] disabled:opacity-50 font-semibold transition-colors text-[clamp(0.82rem,2.2vw,0.95rem)]"
             >
               {startingNewGame ? "Starting…" : "New Game"}
             </button>
@@ -279,7 +279,7 @@ export default function HostPage() {
           <button
             onClick={handleReset}
             disabled={resetting}
-            className="px-[4vw] py-[1.2vh] min-h-[2.8rem] rounded-[min(0.9rem,3vw)] border-2 border-red-300 text-red-500 hover:bg-red-50 disabled:opacity-50 font-semibold transition-colors text-[clamp(0.82rem,2.2vw,0.95rem)]"
+            className="brand-button-secondary px-[4vw] py-[1.2vh] min-h-[2.8rem] rounded-[min(0.9rem,3vw)] border-2 disabled:opacity-50 font-semibold transition-colors text-[clamp(0.82rem,2.2vw,0.95rem)]"
           >
             {resetting ? "Resetting…" : "Reset Game"}
           </button>
@@ -289,9 +289,9 @@ export default function HostPage() {
       {/* Players and winners */}
       <div className="flex-1 grid grid-cols-1 xl:grid-cols-[minmax(18rem,0.8fr)_minmax(34rem,1.2fr)] gap-[2vh] items-start">
         <div className="flex flex-col gap-[2vh] xl:sticky xl:top-[3vh]">
-          <section className="bg-white/70 rounded-[min(1.4rem,3vw)] px-[4vw] py-[2vh] shadow-sm">
+          <section className="rounded-[min(1.4rem,3vw)] border border-white/60 bg-white/68 px-[4vw] py-[2vh] shadow-sm backdrop-blur-md">
             <div className="flex flex-wrap items-baseline gap-3 mb-[1.6vh]">
-              <h2 className="font-pacifico text-[clamp(1.5rem,4vw,2.4rem)] text-amber-600 leading-tight">
+              <h2 className="font-pacifico text-[clamp(1.5rem,4vw,2.4rem)] brand-heading leading-tight">
                 👥 Joined Players
               </h2>
               <span className="text-[clamp(0.95rem,2.6vw,1.25rem)] font-bold text-gray-400">
@@ -308,8 +308,8 @@ export default function HostPage() {
                     key={player.id}
                     className={`px-[3vw] py-[0.8vh] rounded-full text-[clamp(0.82rem,2.2vw,1rem)] font-semibold ${
                       player.hasWon
-                        ? "bg-amber-200 text-amber-900"
-                        : "bg-white text-gray-700"
+                        ? "brand-chip-mint"
+                        : "bg-white/82 text-gray-700 backdrop-blur-sm"
                     }`}
                   >
                     {player.name}{player.hasWon ? " 🏆" : ""}
@@ -324,7 +324,7 @@ export default function HostPage() {
 
         <section className="min-w-0">
         <div className="flex flex-wrap items-baseline gap-3 mb-[2vh]">
-          <h2 className="font-pacifico text-[clamp(1.8rem,4.8vw,3rem)] text-amber-600 leading-tight">
+          <h2 className="font-pacifico text-[clamp(1.8rem,4.8vw,3rem)] brand-heading leading-tight">
             {isEnded ? "🎉 Final Results" : winners.length === 0 ? "🍦 Game in progress…" : "🏆 Winners so far"}
           </h2>
           {winners.length > 0 && (
@@ -343,13 +343,13 @@ export default function HostPage() {
             {winners.map((w, i) => (
               <div
                 key={`${w.name}-${w.wonAt}`}
-                className={`grid grid-cols-[auto_1fr] items-center gap-[1.2rem] bg-white rounded-[min(1.4rem,3vw)] px-[clamp(1rem,2vw,1.6rem)] py-[1.8vh] shadow-sm border-2 min-h-[7.5rem] ${
-                  i === 0 ? "border-amber-400" : "border-transparent"
+                className={`grid grid-cols-[auto_1fr] items-center gap-[1.2rem] rounded-[min(1.4rem,3vw)] border-2 bg-white/84 px-[clamp(1rem,2vw,1.6rem)] py-[1.8vh] shadow-sm backdrop-blur-md min-h-[7.5rem] ${
+                  i === 0 ? "border-[#ffc5d9]" : "border-transparent"
                 }`}
               >
                 <span
                   className={`text-[clamp(2rem,4vw,3.25rem)] font-black leading-none w-[4.5rem] text-center ${
-                    i === 0 ? "text-amber-500" : i === 1 ? "text-gray-400" : "text-amber-300"
+                    i === 0 ? "brand-rank-1" : i === 1 ? "brand-rank-2" : "brand-rank-3"
                   }`}
                 >
                   #{i + 1}

@@ -127,7 +127,7 @@ export function ProposeModal({
                 ←
               </button>
             )}
-            <h2 className="font-pacifico text-[clamp(1rem,4vw,1.25rem)] text-amber-600">
+            <h2 className="font-pacifico text-[clamp(1rem,4vw,1.25rem)] brand-heading">
               {step === 1 && (tappedFlavorLabel ? `Trade ${tappedFlavorLabel} with…` : "Trade with…")}
               {step === 2 && "You're offering…"}
               {step === 3 && "You want back…"}
@@ -149,7 +149,7 @@ export function ProposeModal({
               key={s}
               className={`h-1 flex-1 rounded-full transition-colors ${
                 (s === 1 && step >= 1) || (s === 3 && step === 3) || s < step
-                  ? "bg-amber-400"
+                  ? "bg-[#ffc5d9]"
                   : "bg-gray-100"
               }`}
             />
@@ -168,7 +168,7 @@ export function ProposeModal({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search by name…"
-                className="w-full px-[4vw] py-[1.6vh] rounded-[min(1rem,4vw)] border-2 border-amber-200 focus:border-amber-400 focus:outline-none text-[clamp(0.95rem,3.8vw,1rem)] text-gray-700 placeholder:text-gray-300"
+                className="brand-input w-full px-[4vw] py-[1.6vh] rounded-[min(1rem,4vw)] border-2 focus:outline-none text-[clamp(0.95rem,3.8vw,1rem)]"
               />
               {loadingPlayers ? (
                 <p className="text-center text-gray-400 py-[3vh] text-[clamp(0.85rem,3.4vw,0.95rem)]">Loading players…</p>
@@ -185,10 +185,10 @@ export function ProposeModal({
                           setError("");
                           setStep(initialOfferedFlavor ? 3 : 2);
                         }}
-                        className="w-full text-left px-[4vw] py-[1.6vh] rounded-[min(1rem,4vw)] border-2 border-gray-100 hover:border-amber-300 hover:bg-amber-50 transition-colors flex items-center justify-between gap-3"
+                        className="w-full text-left px-[4vw] py-[1.6vh] rounded-[min(1rem,4vw)] border-2 border-gray-100 hover:border-[#ffc5d9] hover:bg-[#fdf5c9] transition-colors flex items-center justify-between gap-3"
                       >
                         <span className="font-semibold text-[clamp(0.9rem,3.7vw,1rem)] text-gray-700">{p.name}</span>
-                        {p.hasWon && <span className="text-[clamp(0.68rem,2.8vw,0.75rem)] bg-amber-100 text-amber-700 px-[2vw] py-[0.3vh] rounded-full">Winner 🏆</span>}
+                        {p.hasWon && <span className="text-[clamp(0.68rem,2.8vw,0.75rem)] brand-chip-mint px-[2vw] py-[0.3vh] rounded-full">Winner 🏆</span>}
                       </button>
                     </li>
                   ))}
@@ -200,7 +200,7 @@ export function ProposeModal({
           {/* ── Step 2: Pick scoop to offer ── */}
           {step === 2 && (
             <div className="flex flex-col gap-3 pt-2">
-              <p className="text-[clamp(0.82rem,3.2vw,0.92rem)] text-gray-500 text-center">
+              <p className="text-[clamp(0.82rem,3.2vw,0.92rem)] brand-text-muted text-center">
                 Trading with <strong>{selectedPlayer?.name}</strong>
               </p>
               {playerScoops.map((flavor, i) => {
@@ -212,7 +212,7 @@ export function ProposeModal({
                       setOfferedFlavor(flavor);
                       setStep(3);
                     }}
-                    className="w-full flex items-center gap-4 px-[4vw] py-[1.7vh] rounded-[min(1rem,4vw)] border-2 border-gray-100 hover:border-amber-300 hover:bg-amber-50 transition-colors"
+                    className="w-full flex items-center gap-4 px-[4vw] py-[1.7vh] rounded-[min(1rem,4vw)] border-2 border-gray-100 hover:border-[#ffc5d9] hover:bg-[#fdf5c9] transition-colors"
                   >
                     <FlavorSwatch flavor={flavor} size="clamp(2.1rem, 7vw, 3rem)" className="flex-shrink-0" />
                     <div className="text-left">
@@ -228,7 +228,7 @@ export function ProposeModal({
           {/* ── Step 3: Pick flavor to request ── */}
           {step === 3 && (
             <div className="flex flex-col gap-3 pt-2">
-              <p className="text-[clamp(0.82rem,3.2vw,0.92rem)] text-gray-500 text-center leading-snug">
+              <p className="text-[clamp(0.82rem,3.2vw,0.92rem)] brand-text-muted text-center leading-snug">
                 Giving up <strong>{offeredFlavor ? FLAVORS[offeredFlavor].label : ""}</strong> — tap the flavour you want back.
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -246,8 +246,8 @@ export function ProposeModal({
                       disabled={submitting}
                       className={`flex flex-col items-center justify-center gap-2 px-[2.4vw] py-[1.5vh] min-h-[7rem] rounded-[min(1rem,4vw)] border-2 text-center transition-colors ${
                         selected
-                          ? "border-amber-400 bg-amber-50"
-                          : "border-gray-100 hover:border-amber-200 hover:bg-amber-50"
+                          ? "border-[#ffc5d9] bg-[#fdf5c9]"
+                          : "border-gray-100 hover:border-[#ffc5d9] hover:bg-[#fdf5c9]"
                       } ${submitting ? "opacity-60 cursor-wait" : ""}`}
                     >
                       <FlavorSwatch flavor={fid} size="clamp(2rem, 6vw, 2.7rem)" className="flex-shrink-0" />
@@ -257,9 +257,9 @@ export function ProposeModal({
                 })}
               </div>
 
-              {error && <p className="text-red-500 text-[clamp(0.8rem,3.2vw,0.9rem)] text-center">{error}</p>}
+              {error && <p className="brand-heading text-[clamp(0.8rem,3.2vw,0.9rem)] text-center">{error}</p>}
               {submitting && (
-                <p className="text-[clamp(0.86rem,3.2vw,0.96rem)] text-amber-700 text-center font-semibold mt-[1vh]">
+                <p className="text-[clamp(0.86rem,3.2vw,0.96rem)] brand-heading text-center font-semibold mt-[1vh]">
                   Sending proposal…
                 </p>
               )}

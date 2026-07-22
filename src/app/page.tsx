@@ -60,8 +60,8 @@ export default function JoinPage() {
       />
 
       <div className="text-center max-w-[88vw]">
-        <h1 className="font-pacifico text-[clamp(2.1rem,8.6vw,3.2rem)] leading-[0.95] text-amber-600 mb-[1vh]">ScoopShare</h1>
-        <p className="text-gray-500 text-[clamp(0.95rem,3.8vw,1.125rem)] leading-snug">Trade scoops. Make friends. Win ice cream.</p>
+        <h1 className="font-pacifico text-[clamp(2.1rem,8.6vw,3.2rem)] leading-[0.95] brand-heading mb-[1vh]">ScoopShare</h1>
+        <p className="brand-text-muted text-[clamp(0.95rem,3.8vw,1.125rem)] leading-snug">Trade scoops. Make friends. Win ice cream.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="w-[88vw] max-w-[24rem] flex flex-col gap-[1.8vh]">
@@ -75,17 +75,17 @@ export default function JoinPage() {
             autoFocus
             autoComplete="off"
             autoCapitalize="words"
-            className="w-full text-[clamp(1rem,4.2vw,1.125rem)] px-[4vw] py-[1.8vh] rounded-[min(1.25rem,4vw)] border-2 border-amber-200 focus:border-amber-400 focus:outline-none bg-white placeholder:text-gray-300 text-gray-700"
+            className="brand-input w-full text-[clamp(1rem,4.2vw,1.125rem)] px-[4vw] py-[1.8vh] rounded-[min(1.25rem,4vw)] border-2 focus:outline-none"
           />
           {error && (
-            <p className="text-red-500 text-[clamp(0.85rem,3.4vw,0.95rem)] mt-[1vh] text-center">{error}</p>
+            <p className="brand-heading text-[clamp(0.85rem,3.4vw,0.95rem)] mt-[1vh] text-center">{error}</p>
           )}
         </div>
 
         <button
           type="submit"
           disabled={isLoading || !name.trim()}
-          className="w-full py-[2vh] min-h-[3.5rem] rounded-[min(1.25rem,4vw)] bg-amber-500 hover:bg-amber-600 active:bg-amber-700 disabled:bg-amber-200 disabled:cursor-not-allowed text-white font-bold text-[clamp(1.05rem,4.6vw,1.35rem)] transition-colors"
+          className="brand-button-primary w-full py-[2vh] min-h-[3.5rem] rounded-[min(1.25rem,4vw)] disabled:cursor-not-allowed font-bold text-[clamp(1.05rem,4.6vw,1.35rem)] transition-colors"
         >
           {isLoading ? "Joining..." : "Join the Fun!"}
         </button>

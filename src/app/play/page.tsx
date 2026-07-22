@@ -178,17 +178,17 @@ export default function PlayPage() {
         />
 
         <div className="max-w-[88vw]">
-          <h1 className="font-pacifico text-[clamp(1.8rem,7vw,2.6rem)] leading-tight text-amber-600 mb-[1vh]">
+          <h1 className="font-pacifico text-[clamp(1.8rem,7vw,2.6rem)] leading-tight brand-heading mb-[1vh]">
             You&apos;re in, {player.name}! 🎉
           </h1>
-          <p className="text-gray-500 text-[clamp(1rem,4vw,1.2rem)] leading-snug">
+          <p className="brand-text-muted text-[clamp(1rem,4vw,1.2rem)] leading-snug">
             Waiting for the host to start the game…
           </p>
         </div>
 
         {/* Flavor legend preview */}
-        <div className="bg-white rounded-[min(1.25rem,4vw)] p-[max(0.9rem,2vh)] w-[88vw] max-w-[24rem] shadow-sm">
-          <p className="text-[clamp(0.7rem,2.9vw,0.8rem)] font-bold text-gray-400 uppercase tracking-wider mb-[1.2vh]">
+        <div className="bg-white/82 rounded-[min(1.25rem,4vw)] p-[max(0.9rem,2vh)] w-[88vw] max-w-[24rem] shadow-sm backdrop-blur-sm">
+          <p className="text-[clamp(0.7rem,2.9vw,0.8rem)] font-bold brand-text-soft uppercase tracking-wider mb-[1.2vh]">
             Flavours you might get
           </p>
           <div className="grid grid-cols-2 gap-[1.2vh]">
@@ -200,7 +200,7 @@ export default function PlayPage() {
                     className="w-[4.8vw] h-[4.8vw] max-w-[1.25rem] max-h-[1.25rem] rounded-full border border-gray-200 flex-shrink-0"
                     style={{ background: color }}
                   />
-                  <span className="text-[clamp(0.8rem,3.3vw,0.95rem)] text-gray-600">{label}</span>
+                  <span className="text-[clamp(0.8rem,3.3vw,0.95rem)] brand-text-muted">{label}</span>
                 </div>
               );
             })}
@@ -225,7 +225,7 @@ export default function PlayPage() {
         {/* ── Incoming proposals ── */}
         {visibleProposals.length > 0 && (
           <section className="w-[92vw] max-w-[25rem] flex flex-col gap-[1.3vh]">
-            <p className="text-[clamp(0.7rem,2.8vw,0.8rem)] font-bold text-gray-400 uppercase tracking-wider text-center">
+            <p className="text-[clamp(0.7rem,2.8vw,0.8rem)] font-bold brand-text-soft uppercase tracking-wider text-center">
               Incoming Trade{visibleProposals.length > 1 ? "s" : ""}
             </p>
             {visibleProposals.map((proposal) => {
@@ -233,9 +233,9 @@ export default function PlayPage() {
               return (
                 <div
                   key={proposal.id}
-                  className="bg-white rounded-[min(1.2rem,4vw)] p-[max(0.85rem,1.8vh)] shadow-sm border-2 border-amber-200"
+                  className="bg-white/88 rounded-[min(1.2rem,4vw)] p-[max(0.85rem,1.8vh)] shadow-sm border-2 brand-card-border backdrop-blur-sm"
                 >
-                  <p className="text-gray-700 text-[clamp(0.82rem,3.3vw,0.95rem)] leading-snug mb-[1.1vh]">
+                  <p className="brand-text-muted text-[clamp(0.82rem,3.3vw,0.95rem)] leading-snug mb-[1.1vh]">
                     <strong>{proposal.fromPlayerName}</strong> offers{" "}
                     <span
                       className="inline-block w-3 h-3 rounded-full align-middle mx-0.5 border border-gray-200"
@@ -252,14 +252,14 @@ export default function PlayPage() {
                     <button
                       onClick={() => handleRespond(proposal.id, false)}
                       disabled={isResponding}
-                      className="flex-1 min-h-[2.8rem] py-[1.2vh] rounded-[min(0.9rem,3vw)] border-2 border-gray-200 text-gray-600 font-semibold text-[clamp(0.82rem,3.2vw,0.92rem)] hover:bg-gray-50 disabled:opacity-40 transition-colors"
+                      className="brand-button-secondary flex-1 min-h-[2.8rem] py-[1.2vh] rounded-[min(0.9rem,3vw)] border-2 font-semibold text-[clamp(0.82rem,3.2vw,0.92rem)] disabled:opacity-40 transition-colors"
                     >
                       Decline
                     </button>
                     <button
                       onClick={() => handleRespond(proposal.id, true)}
                       disabled={isResponding}
-                      className="flex-1 min-h-[2.8rem] py-[1.2vh] rounded-[min(0.9rem,3vw)] bg-amber-500 hover:bg-amber-600 text-white font-semibold text-[clamp(0.82rem,3.2vw,0.92rem)] disabled:opacity-40 transition-colors"
+                      className="brand-button-primary flex-1 min-h-[2.8rem] py-[1.2vh] rounded-[min(0.9rem,3vw)] font-semibold text-[clamp(0.82rem,3.2vw,0.92rem)] disabled:opacity-40 transition-colors"
                     >
                       Accept ✓
                     </button>
@@ -272,15 +272,15 @@ export default function PlayPage() {
 
         {/* ── Cone + scoop labels ── */}
         <div className="flex flex-col items-center gap-[1.2vh] w-full">
-          <p className="font-pacifico text-[clamp(1.35rem,5vw,1.9rem)] text-amber-600 leading-none text-center">
+          <p className="font-pacifico text-[clamp(1.35rem,5vw,1.9rem)] brand-heading leading-none text-center">
             {playerName}&apos;s Cone
           </p>
           {player.hasWon ? (
-            <p className="text-[clamp(0.86rem,3.3vw,0.98rem)] text-gray-600 text-center max-w-[82vw] font-medium">
+            <p className="text-[clamp(0.86rem,3.3vw,0.98rem)] brand-text-muted text-center max-w-[82vw] font-medium">
               All 3 scoops match.
             </p>
           ) : (
-            <p className="text-[clamp(0.86rem,3.3vw,0.98rem)] text-gray-600 text-center max-w-[82vw] font-medium">
+            <p className="text-[clamp(0.86rem,3.3vw,0.98rem)] brand-text-muted text-center max-w-[82vw] font-medium">
               Tap a scoop to propose a swap.
             </p>
           )}
@@ -310,26 +310,26 @@ export default function PlayPage() {
               showWinModal ? "opacity-100 scale-100" : "opacity-0 scale-95"
             }`}
           >
-            <p className="font-pacifico text-[clamp(1.4rem,5.2vw,2rem)] leading-none text-amber-600">
+            <p className="font-pacifico text-[clamp(1.4rem,5.2vw,2rem)] leading-none brand-heading">
               You won {ordinal(player.winPlace)} place!
             </p>
-            <p className="mt-[0.8vh] text-[clamp(0.85rem,3.1vw,1rem)] text-gray-600">
+            <p className="mt-[0.8vh] text-[clamp(0.85rem,3.1vw,1rem)] brand-text-muted">
               Hang tight while the host resets or starts the next round.
             </p>
           </div>
         )}
 
         {isLocked && canTrade && (
-          <div className="w-[92vw] max-w-[25rem] bg-amber-50 border border-amber-200 rounded-[min(1rem,4vw)] px-[4vw] py-[1.4vh] text-center">
-            <p className="text-[clamp(0.86rem,3.4vw,0.96rem)] font-semibold text-amber-700">
+          <div className="brand-soft-surface w-[92vw] max-w-[25rem] rounded-[min(1rem,4vw)] px-[4vw] py-[1.4vh] text-center border">
+            <p className="text-[clamp(0.86rem,3.4vw,0.96rem)] font-semibold">
               You can propose another swap in {countdownSec}s.
             </p>
           </div>
         )}
 
         {/* ── Flavor legend ── */}
-        <div className="bg-white rounded-[min(1.2rem,4vw)] p-[max(0.85rem,1.8vh)] w-[92vw] max-w-[25rem] shadow-sm">
-          <p className="text-[clamp(0.7rem,2.8vw,0.8rem)] font-bold text-gray-400 uppercase tracking-wider mb-[1vh] text-center">
+        <div className="bg-white/84 rounded-[min(1.2rem,4vw)] p-[max(0.85rem,1.8vh)] w-[92vw] max-w-[25rem] shadow-sm backdrop-blur-sm">
+          <p className="text-[clamp(0.7rem,2.8vw,0.8rem)] font-bold brand-text-soft uppercase tracking-wider mb-[1vh] text-center">
             Flavour Guide
           </p>
           <div className="grid grid-cols-2 gap-[1vh]">
@@ -338,7 +338,7 @@ export default function PlayPage() {
               return (
                 <div key={fid} className="flex items-center gap-2">
                   <FlavorSwatch flavor={fid} size="clamp(1.5rem, 8vw, 2rem)" className="flex-shrink-0" />
-                  <span className="text-[clamp(0.76rem,3vw,0.85rem)] text-gray-600">{label}</span>
+                  <span className="text-[clamp(0.76rem,3vw,0.85rem)] brand-text-muted">{label}</span>
                 </div>
               );
             })}
@@ -382,11 +382,11 @@ export default function PlayPage() {
           animationMode={player.hasWon ? "loop" : "off"}
         />
       </div>
-      <h1 className="font-pacifico text-[clamp(1.8rem,7vw,2.6rem)] text-amber-600">Game Over!</h1>
+      <h1 className="font-pacifico text-[clamp(1.8rem,7vw,2.6rem)] brand-heading">Game Over!</h1>
       {player.hasWon ? (
-        <p className="text-[clamp(0.95rem,3.8vw,1.1rem)] text-gray-600">You won — great trading! 🏆</p>
+        <p className="text-[clamp(0.95rem,3.8vw,1.1rem)] brand-text-muted">You won — great trading! 🏆</p>
       ) : (
-        <p className="text-[clamp(0.95rem,3.8vw,1.1rem)] text-gray-500">Thanks for playing ScoopShare!</p>
+        <p className="text-[clamp(0.95rem,3.8vw,1.1rem)] brand-text-soft">Thanks for playing ScoopShare!</p>
       )}
     </main>
   );
