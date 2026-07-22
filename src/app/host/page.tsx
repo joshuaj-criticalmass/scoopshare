@@ -165,46 +165,75 @@ export default function HostPage() {
   // ── Pre-game (lobby) ───────────────────────────────────────────────────────
   if (status === "lobby") {
     return (
-      <main className="min-h-[100dvh] flex flex-col items-center justify-center gap-[4vh] px-[6vw] py-[4vh] overflow-x-hidden">
-        <h1 className="font-pacifico text-[clamp(2.4rem,7vw,4rem)] brand-heading text-center leading-none">ScoopShare</h1>
+      <main className="min-h-[100dvh] px-[4vw] py-[4vh] overflow-x-hidden">
+        <div className="mx-auto flex w-full max-w-[92rem] flex-col gap-[3vh]">
+          <h1 className="font-pacifico text-[clamp(2.4rem,7vw,4rem)] brand-heading text-center leading-none">
+            ScoopShare
+          </h1>
 
-        <div className="flex flex-col sm:flex-row items-center gap-[4vh] w-full justify-center">
-          {/* QR code */}
-          {joinUrl && (
-            <div className="rounded-[min(1.5rem,4vw)] border border-white/70 bg-white/84 p-[min(1rem,2vh)] shadow-md backdrop-blur-md">
-              <QRCodeSVG
-                value={joinUrl}
-                size={qrSize}
-                bgColor="#ffffff"
-                fgColor="#1a1a1a"
-              />
+          <div className="flex w-full flex-col gap-[3vh] xl:flex-row xl:items-start xl:justify-center xl:gap-[2vw]">
+          <aside className="w-full xl:max-w-[25rem] xl:flex-shrink-0">
+            <div className="rounded-[min(1.5rem,4vw)] border border-white/70 bg-white/80 px-[4vw] py-[2.4vh] shadow-md backdrop-blur-md xl:sticky xl:top-[4vh] xl:h-[calc(100dvh-25vh)] xl:px-[2vw]">
+              <div className="flex h-full flex-col">
+                <p className="text-[clamp(0.82rem,1.2vw,0.98rem)] font-bold text-gray-400 uppercase tracking-[0.22em] mb-[1.6vh] text-left">
+                  How To Play
+                </p>
+                <ul className="flex h-full flex-1 flex-col justify-around text-[clamp(1rem,1.8vw,1.42rem)] leading-[1.28] brand-text-muted text-left">
+                  <li className="flex-1 flex items-center">Click the QR code and enter your name.</li>
+                  <li className="flex-1 flex items-center">Wait for the host to start the game.</li>
+                  <li className="flex-1 flex items-center">You will get a cone with 3 different scoops of ice cream.</li>
+                  <li className="flex-1 flex items-center">
+                    <div>
+                      Trade with other players to make all of your scoops the same flavour.
+                      <span className="mt-[0.7vh] block text-[clamp(0.84rem,1.15vw,1rem)] leading-[1.35] brand-text-soft">
+                        If you request a flavour someone doesn&apos;t have or they reject your trade, you get a 5 second timeout.
+                      </span>
+                    </div>
+                  </li>
+                  <li className="flex-1 flex items-center">First, second, and third place are awarded in order.</li>
+                </ul>
+              </div>
             </div>
-          )}
+          </aside>
 
-          {/* Info */}
-          <div className="flex flex-col items-center sm:items-start gap-[2vh] w-full max-w-[92vw] sm:max-w-[28rem]">
-            <div className="text-center sm:text-left w-full">
-              <p className="text-[clamp(0.8rem,2vw,0.95rem)] font-bold text-gray-400 uppercase tracking-wider mb-[0.6vh]">
-                Join at
-              </p>
-              <p className="text-[clamp(1rem,3.5vw,1.6rem)] font-bold text-gray-700 font-mono break-all leading-tight">
-                {displayUrl || "loading…"}
-              </p>
+          <section className="flex min-w-0 flex-1 flex-col items-center gap-[3vh]">
+            <div className="flex flex-col items-center gap-[4vh] w-full">
+              <div className="flex flex-col sm:flex-row items-center gap-[4vh] w-full justify-center">
+                {joinUrl && (
+                  <div className="rounded-[min(1.5rem,4vw)] border border-white/70 bg-white/84 p-[min(1rem,2vh)] shadow-md backdrop-blur-md">
+                    <QRCodeSVG
+                      value={joinUrl}
+                      size={qrSize}
+                      bgColor="#ffffff"
+                      fgColor="#1a1a1a"
+                    />
+                  </div>
+                )}
+
+                <div className="flex flex-col items-center sm:items-start gap-[2vh] w-full max-w-[92vw] sm:max-w-[28rem]">
+                  <div className="text-center sm:text-left w-full">
+                    <p className="text-[clamp(0.8rem,2vw,0.95rem)] font-bold text-gray-400 uppercase tracking-wider mb-[0.6vh]">
+                      Join at
+                    </p>
+                    <p className="text-[clamp(1rem,3.5vw,1.6rem)] font-bold text-gray-700 font-mono break-all leading-tight">
+                      {displayUrl || "loading…"}
+                    </p>
+                  </div>
+
+                  <div className="rounded-[min(1.25rem,4vw)] border border-white/70 bg-white/78 px-[5vw] py-[2vh] shadow-sm text-center w-full sm:w-auto backdrop-blur-md">
+                    <p className="text-[clamp(3rem,12vw,4.5rem)] font-black brand-heading leading-none">
+                      {playerCount}
+                    </p>
+                    <p className="text-gray-500 font-semibold mt-[0.6vh] text-[clamp(0.9rem,2.6vw,1rem)]">
+                      {playerCount === 1 ? "player joined" : "players joined"}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="rounded-[min(1.25rem,4vw)] border border-white/70 bg-white/78 px-[5vw] py-[2vh] shadow-sm text-center w-full sm:w-auto backdrop-blur-md">
-              <p className="text-[clamp(3rem,12vw,4.5rem)] font-black brand-heading leading-none">
-                {playerCount}
-              </p>
-              <p className="text-gray-500 font-semibold mt-[0.6vh] text-[clamp(0.9rem,2.6vw,1rem)]">
-                {playerCount === 1 ? "player joined" : "players joined"}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="w-[92vw] max-w-[34rem] flex flex-col gap-[1.5vh]">
-          <div className="rounded-[min(1.25rem,4vw)] border border-white/70 bg-white/78 px-[4vw] py-[1.8vh] shadow-sm backdrop-blur-md">
+            <div className="w-[92vw] max-w-[34rem] flex flex-col gap-[1.5vh]">
+              <div className="rounded-[min(1.25rem,4vw)] border border-white/70 bg-white/78 px-[4vw] py-[1.8vh] shadow-sm backdrop-blur-md">
             <p className="text-[clamp(0.8rem,2vw,0.95rem)] font-bold text-gray-400 uppercase tracking-wider mb-[1vh] text-center">
               Joined Players
             </p>
@@ -224,21 +253,24 @@ export default function HostPage() {
                 ))}
               </div>
             )}
+              </div>
+
+              <button
+                onClick={handleStart}
+                disabled={starting || playerCount < MIN_PLAYERS_TO_START}
+                className="brand-button-primary w-full px-[6vw] py-[2vh] min-h-[3.75rem] rounded-[min(1.25rem,4vw)] disabled:cursor-not-allowed font-black text-[clamp(1.05rem,3.8vw,1.6rem)] transition-colors shadow-lg"
+              >
+                {starting
+                  ? "Starting…"
+                  : playerCount < MIN_PLAYERS_TO_START
+                  ? `Need ${MIN_PLAYERS_TO_START} players to start`
+                  : `Start Game — ${playerCount} ${playerCount === 1 ? "player" : "players"}`}
+              </button>
+
+              {resultsHistorySection}
+            </div>
+          </section>
           </div>
-
-          <button
-            onClick={handleStart}
-            disabled={starting || playerCount < MIN_PLAYERS_TO_START}
-            className="brand-button-primary w-full px-[6vw] py-[2vh] min-h-[3.75rem] rounded-[min(1.25rem,4vw)] disabled:cursor-not-allowed font-black text-[clamp(1.05rem,3.8vw,1.6rem)] transition-colors shadow-lg"
-          >
-            {starting
-              ? "Starting…"
-              : playerCount < MIN_PLAYERS_TO_START
-              ? `Need ${MIN_PLAYERS_TO_START} players to start`
-              : `Start Game — ${playerCount} ${playerCount === 1 ? "player" : "players"}`}
-          </button>
-
-          {resultsHistorySection}
         </div>
       </main>
     );
