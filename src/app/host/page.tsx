@@ -94,6 +94,8 @@ export default function HostPage() {
 
   const { status, playerCount, joinedPlayers, winners, resultsHistory } = summary;
   const displayUrl = joinUrl.replace(/^https?:\/\//, "");
+  const frostyPicksUrl = joinUrl ? `${joinUrl}/meganas-frosty-picks` : "";
+  const frostyPicksDisplayUrl = frostyPicksUrl.replace(/^https?:\/\//, "");
 
   const resultsHistorySection = (
     <section className="rounded-[min(1.4rem,3vw)] border border-white/60 bg-white/68 px-[4vw] py-[2vh] shadow-sm backdrop-blur-md mt-[2vh]">
@@ -171,8 +173,8 @@ export default function HostPage() {
             ScoopShare
           </h1>
 
-          <div className="flex w-full flex-col gap-[3vh] xl:flex-row xl:items-start xl:justify-center xl:gap-[2vw]">
-          <aside className="w-full xl:max-w-[25rem] xl:flex-shrink-0">
+          <div className="grid w-full grid-cols-1 gap-[3vh] xl:grid-cols-[minmax(18rem,0.9fr)_minmax(20rem,0.9fr)_minmax(22rem,1.1fr)] xl:items-start xl:gap-[2vw]">
+          <aside className="w-full">
             <div className="rounded-[min(1.5rem,4vw)] border border-white/70 bg-white/80 px-[4vw] py-[2.4vh] shadow-md backdrop-blur-md xl:sticky xl:top-[4vh] xl:h-[calc(100dvh-25vh)] xl:px-[2vw]">
               <div className="flex h-full flex-col items-start">
                 <p className="text-[clamp(0.82rem,1.2vw,0.98rem)] font-bold text-gray-400 uppercase tracking-[0.22em] mb-[1.6vh] text-left">
@@ -196,9 +198,13 @@ export default function HostPage() {
             </div>
           </aside>
 
-          <section className="flex min-w-0 flex-1 flex-col items-center gap-[3vh]">
-            <div className="flex flex-col items-center gap-[4vh] w-full">
-              <div className="flex flex-col sm:flex-row items-center gap-[4vh] w-full justify-center">
+          <section className="flex min-w-0 flex-col gap-[1.5vh]">
+            <div className="rounded-[min(1.5rem,4vw)] border border-white/70 bg-white/80 px-[4vw] py-[2.4vh] shadow-md backdrop-blur-md xl:px-[2vw]">
+              <p className="text-[clamp(0.8rem,2vw,0.95rem)] font-bold text-gray-400 uppercase tracking-wider mb-[1.2vh] text-center">
+                Game Join
+              </p>
+              <div className="flex flex-col items-center gap-[3vh] w-full">
+                <div className="flex flex-col items-center gap-[3vh] w-full">
                 {joinUrl && (
                   <div className="rounded-[min(1.5rem,4vw)] border border-white/70 bg-white/84 p-[min(1rem,2vh)] shadow-md backdrop-blur-md">
                     <QRCodeSVG
@@ -210,8 +216,8 @@ export default function HostPage() {
                   </div>
                 )}
 
-                <div className="flex flex-col items-center sm:items-start gap-[2vh] w-full max-w-[92vw] sm:max-w-[28rem]">
-                  <div className="text-center sm:text-left w-full">
+                <div className="flex flex-col items-center gap-[2vh] w-full max-w-[92vw] sm:max-w-[28rem]">
+                  <div className="text-center w-full">
                     <p className="text-[clamp(0.8rem,2vw,0.95rem)] font-bold text-gray-400 uppercase tracking-wider mb-[0.6vh]">
                       Join at
                     </p>
@@ -220,39 +226,20 @@ export default function HostPage() {
                     </p>
                   </div>
 
-                  <div className="rounded-[min(1.25rem,4vw)] border border-white/70 bg-white/78 px-[5vw] py-[2vh] shadow-sm text-center w-full sm:w-auto backdrop-blur-md">
+                  <div className="rounded-[min(1.25rem,4vw)] border border-white/70 bg-white/78 px-[5vw] py-[2vh] shadow-sm text-center w-full backdrop-blur-md">
                     <p className="text-[clamp(3rem,12vw,4.5rem)] font-black brand-heading leading-none">
                       {playerCount}
                     </p>
                     <p className="text-gray-500 font-semibold mt-[0.6vh] text-[clamp(0.9rem,2.6vw,1rem)]">
                       {playerCount === 1 ? "player joined" : "players joined"}
                     </p>
+                    <p className="mt-[0.8vh] text-[clamp(0.82rem,2.2vw,0.95rem)] brand-text-muted">
+                      {playerCount < MIN_PLAYERS_TO_START
+                        ? `${MIN_PLAYERS_TO_START - playerCount} more needed to start`
+                        : "Ready to start"}
+                    </p>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            <div className="w-[92vw] max-w-[34rem] flex flex-col gap-[1.5vh]">
-              <div className="rounded-[min(1.25rem,4vw)] border border-white/70 bg-white/78 px-[4vw] py-[1.8vh] shadow-sm backdrop-blur-md">
-            <p className="text-[clamp(0.8rem,2vw,0.95rem)] font-bold text-gray-400 uppercase tracking-wider mb-[1vh] text-center">
-              Joined Players
-            </p>
-            {joinedPlayers.length === 0 ? (
-              <p className="text-center text-gray-400 text-[clamp(0.9rem,2.8vw,1rem)]">
-                Waiting for players to join…
-              </p>
-            ) : (
-              <div className="flex flex-wrap justify-center gap-[1vh]">
-                {joinedPlayers.map((player) => (
-                  <span
-                    key={player.id}
-                    className="brand-chip px-[3vw] py-[0.7vh] rounded-full text-[clamp(0.82rem,2.4vw,0.95rem)] font-semibold"
-                  >
-                    {player.name}
-                  </span>
-                ))}
-              </div>
-            )}
               </div>
 
               <button
@@ -266,9 +253,38 @@ export default function HostPage() {
                   ? `Need ${MIN_PLAYERS_TO_START} players to start`
                   : `Start Game — ${playerCount} ${playerCount === 1 ? "player" : "players"}`}
               </button>
+              </div>
+            </div>
+          </section>
+
+          <section className="flex min-w-0 flex-col gap-[1.5vh]">
+              {frostyPicksUrl && (
+                <div className="rounded-[min(1.25rem,4vw)] border border-white/70 bg-white/78 px-[4vw] py-[1.8vh] shadow-sm backdrop-blur-md">
+                  <h2 className="font-pacifico text-[clamp(1.5rem,4vw,2.2rem)] brand-heading leading-tight mb-[1.2vh] text-center">
+                    Megana&apos;s Frosty Picks
+                  </h2>
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-[2vh]">
+                    <div className="rounded-[min(1rem,3vw)] border border-white/70 bg-white/90 p-[0.8rem] shadow-sm">
+                      <QRCodeSVG
+                        value={frostyPicksUrl}
+                        size={Math.max(124, Math.min(qrSize * 0.72, 190))}
+                        bgColor="#ffffff"
+                        fgColor="#1a1a1a"
+                      />
+                    </div>
+                    <div className="text-center sm:text-left">
+                      <p className="text-[clamp(0.95rem,2.8vw,1.15rem)] font-bold brand-heading">
+                        Scan for London ice cream picks
+                      </p>
+                      <p className="mt-[0.4vh] text-[clamp(0.82rem,2.2vw,0.95rem)] brand-text-muted break-all leading-snug">
+                        {frostyPicksDisplayUrl}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {resultsHistorySection}
-            </div>
           </section>
           </div>
         </div>
